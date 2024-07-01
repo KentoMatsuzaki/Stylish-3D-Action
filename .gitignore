@@ -70,3 +70,8 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+/Assets/P06_Pai&Mei
+/ProjectSettings
+Assets/P06_Pai&Mei.meta
+/Assets/AssetStore/Cute Girls
+Assets/AssetStore/Cute Girls.meta
