@@ -21,6 +21,12 @@ public class PlayerStateMachine : MonoBehaviour
     /// <summary>プレイヤーの状態</summary>
     private PlayerState _currentState = PlayerState.Idle;
 
+    /// <summary>歩行時の移動速度</summary>
+    [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 1.2f;
+
+    /// <summary>走行時の移動速度</summary>
+    [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 4.0f;
+
     void Start()
     {
         _moveControl = GetComponent<MoveControl>();
@@ -153,10 +159,36 @@ public class PlayerStateMachine : MonoBehaviour
         }
 
         // 入力値が閾値（Release）以下になった場合
-        if (context.canceled)
+        else if (context.canceled)
         { 
-            // 移動させない
+            // 移動しないようにする
             _moveControl.Move(Vector2.zero);
+        }
+    }
+
+    //-------------------------------------------------------------------------------
+    // スプリントのコールバックイベント
+    //-------------------------------------------------------------------------------
+
+    /// <summary>スプリントの制御をするコールバックイベント</summary>
+    /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        // 走行状態に遷移する
+        TransitionToOtherState(PlayerState.Running);
+
+        // 入力値が閾値（Press）以上になった場合
+        if (context.performed)
+        {
+            // 走行時の移動速度に変更する
+            _moveControl.MoveSpeed = _sprintSpeed;
+        }
+
+        // 入力値が閾値（Release）以下になった場合
+        else if (context.canceled)
+        {
+            // 歩行時の移動速度に変更する
+            _moveControl.MoveSpeed = _walkSpeed;
         }
     }
 
@@ -174,6 +206,7 @@ public class PlayerStateMachine : MonoBehaviour
         // 入力値が閾値（Press）以上になった場合
         if (context.performed)
         {
+            // ジャンプさせる
             _jumpControl.Jump(true);
         }
     }
