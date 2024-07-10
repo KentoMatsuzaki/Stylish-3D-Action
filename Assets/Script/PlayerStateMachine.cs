@@ -159,4 +159,22 @@ public class PlayerStateMachine : MonoBehaviour
             _moveControl.Move(Vector2.zero);
         }
     }
+
+    //-------------------------------------------------------------------------------
+    // ジャンプのコールバックイベント
+    //-------------------------------------------------------------------------------
+
+    /// <summary>ジャンプの制御をするコールバックイベント</summary>
+    /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        // ジャンプ状態に遷移する
+        TransitionToOtherState(PlayerState.Jumping);
+
+        // 入力値が閾値（Press）以上になった場合
+        if (context.performed)
+        {
+            _jumpControl.Jump(true);
+        }
+    }
 }
