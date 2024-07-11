@@ -20,12 +20,6 @@ public class Player : MonoBehaviour
     /// <summary>アニメーター</summary>
     private Animator _animator;
 
-    /// <summary>プレイヤーの状態</summary>
-    private State _currentState;
-
-    /// <summary>状態のコレクション</summary>
-    private Dictionary<Type, State> _stateDic;
-
     /// <summary>歩行時の移動速度</summary>
     [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 1.2f;
 
@@ -38,31 +32,6 @@ public class Player : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _animator = GetComponent<Animator>();
-
-        _stateDic = new Dictionary<Type, State>
-        {
-            { typeof(IdleState), new IdleState(this) },
-            { typeof(TrotState), new TrotState(this) },
-            { typeof(SprintState), new SprintState(this) },
-            { typeof(JumpState), new JumpState(this) },
-            { typeof(AttackState), new AttackState(this) },
-            { typeof(DamageState), new DamageState(this) },
-            { typeof(DeadState), new DeadState(this) },
-        };
-
-        ChangeState<IdleState>();
-    }
-
-    /// <summary>プレイヤーの状態を遷移させる</summary>
-    private void ChangeState<T>() where T : State
-    {
-        // 現在の状態と遷移先の状態が同じ場合は早期リターン
-        if (_currentState is T) return;
-
-        // 状態を遷移させる
-        _currentState?.Exit();
-        _currentState = _stateDic[typeof(T)];
-        _currentState.Enter();
     }
 
     //-------------------------------------------------------------------------------
@@ -78,9 +47,6 @@ public class Player : MonoBehaviour
         {
             // 入力値を元に計算した移動方向へと移動させる
             _moveControl.Move(context.ReadValue<Vector2>());
-
-            // 状態を遷移
-            if(!(_currentState is SprintState)) ChangeState<TrotState>();
         }
 
         // 入力値が閾値（Release）以下になった場合
@@ -88,9 +54,6 @@ public class Player : MonoBehaviour
         { 
             // 移動しないようにする
             _moveControl.Move(Vector2.zero);
-
-            // 状態を遷移
-            ChangeState<IdleState>();
         }
     }
 
@@ -107,9 +70,6 @@ public class Player : MonoBehaviour
         {
             // 走行時の移動速度に変更する
             _moveControl.MoveSpeed = _sprintSpeed;
-
-            // 状態を遷移
-            ChangeState<SprintState>();
         }
 
         // 入力値が閾値（Release）以下になった場合
@@ -117,10 +77,6 @@ public class Player : MonoBehaviour
         {
             // 歩行時の移動速度に変更する
             _moveControl.MoveSpeed = _walkSpeed;
-
-            // 状態を遷移
-            if (_moveControl.IsMove) ChangeState<TrotState>();
-            else ChangeState<IdleState>();
         }
     }
 

@@ -695,7 +695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 544f06851df4541118f7b8a4095fe306, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 1.5
+  _moveSpeed: 4
   _turnSpeed: 15
   _brakePower: 12
   _accelerator: 6
@@ -717,8 +717,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd65ae03c9cce4440a9d38cb1c2c11c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 1.5
-  _sprintSpeed: 4
+  _walkSpeed: 4
+  _sprintSpeed: 7.5
 --- !u!114 &1522206746
 MonoBehaviour:
   m_ObjectHideFlags: 0
