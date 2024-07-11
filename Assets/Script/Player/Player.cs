@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using Unity.TinyCharacterController.Check;
-using Unity.TinyCharacterController.Control;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.TinyCharacterController.Check;
+using Unity.TinyCharacterController.Control;
 using UnityEngine.UI;
 
 /// <summary>プレイヤーの状態管理</summary>
@@ -22,7 +20,7 @@ public class Player : MonoBehaviour
     private Animator _animator;
 
     /// <summary>現在のプレイヤーの状態</summary>
-    private PlayerState _currentState;
+    private PlayerState _currentState = PlayerState.Idle;
 
     /// <summary>歩行時の移動速度</summary>
     [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 1.2f;
@@ -40,8 +38,6 @@ public class Player : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _animator = GetComponent<Animator>();
-        // プレイヤーの状態を初期化
-        _currentState = PlayerState.Idle;
     }
 
     private void Update()
@@ -153,7 +149,7 @@ public class Player : MonoBehaviour
             if(_currentState == PlayerState.Sprint)
             {
                 // アニメーションを再生
-                if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Sprint")) _animator.Play("Sprint End");
+                _animator.Play("Sprint End");
 
                 // プレイヤーの状態を更新
                 _currentState = PlayerState.Idle;
@@ -208,5 +204,37 @@ public class Player : MonoBehaviour
 
         // プレイヤーの状態を更新
         _currentState = PlayerState.Idle;
+    }
+
+    //-------------------------------------------------------------------------------
+    // 攻撃のコールバックイベント
+    //-------------------------------------------------------------------------------
+
+    /// <summary>攻撃の制御をするコールバックイベント</summary>
+    /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        // 攻撃アクションが長押しされた場合
+        if (context.performed)
+        {
+            _animator.SetTrigger("Attack");
+        }
+    }
+
+    //-------------------------------------------------------------------------------
+    // 攻撃に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>攻撃のヒット処理をするコールバックイベント</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void AttackImpactEvent()
+    {
+        
+    }
+
+    /// <summary>ルートモーションに合わせてプレイヤーを移動させる</summary>
+    public void MoveWithRootMotion()
+    {
+        
     }
 }
