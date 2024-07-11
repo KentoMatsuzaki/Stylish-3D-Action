@@ -47,6 +47,9 @@ public class Player : MonoBehaviour
         {
             // 入力値を元に計算した移動方向へと移動させる
             _moveControl.Move(context.ReadValue<Vector2>());
+
+            // アニメーションを再生
+            if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("Sprint")) _animator.Play("Run");
         }
 
         // 入力値が閾値（Release）以下になった場合
@@ -54,6 +57,9 @@ public class Player : MonoBehaviour
         { 
             // 移動しないようにする
             _moveControl.Move(Vector2.zero);
+
+            // アニメーションを再生
+            if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("Sprint End")) _animator.Play("Run End");
         }
     }
 
@@ -70,6 +76,9 @@ public class Player : MonoBehaviour
         {
             // 走行時の移動速度に変更する
             _moveControl.MoveSpeed = _sprintSpeed;
+
+            // アニメーションを再生
+            _animator.Play("Sprint");
         }
 
         // 入力値が閾値（Release）以下になった場合
@@ -77,6 +86,9 @@ public class Player : MonoBehaviour
         {
             // 歩行時の移動速度に変更する
             _moveControl.MoveSpeed = _walkSpeed;
+
+            // アニメーションを再生
+            _animator.Play("Sprint End");
         }
     }
 
