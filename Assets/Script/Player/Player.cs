@@ -53,9 +53,14 @@ public class Player : MonoBehaviour
         ChangeState<IdleState>();
     }
 
+    /// <summary>プレイヤーの状態を遷移させる</summary>
     private void ChangeState<T>() where T : State
     {
-        _currentState.Exit();
+        // 現在の状態と遷移先の状態が同じ場合は早期リターン
+        if (_currentState is T) return;
+
+        // 状態を遷移させる
+        _currentState?.Exit();
         _currentState = _stateDic[typeof(T)];
         _currentState.Enter();
     }
@@ -73,6 +78,9 @@ public class Player : MonoBehaviour
         {
             // 入力値を元に計算した移動方向へと移動させる
             _moveControl.Move(context.ReadValue<Vector2>());
+
+            // 状態を遷移
+            if(!(_currentState is SprintState)) ChangeState<TrotState>();
         }
 
         // 入力値が閾値（Release）以下になった場合
@@ -80,6 +88,9 @@ public class Player : MonoBehaviour
         { 
             // 移動しないようにする
             _moveControl.Move(Vector2.zero);
+
+            // 状態を遷移
+            ChangeState<IdleState>();
         }
     }
 
@@ -96,6 +107,9 @@ public class Player : MonoBehaviour
         {
             // 走行時の移動速度に変更する
             _moveControl.MoveSpeed = _sprintSpeed;
+
+            // 状態を遷移
+            ChangeState<SprintState>();
         }
 
         // 入力値が閾値（Release）以下になった場合
@@ -103,6 +117,10 @@ public class Player : MonoBehaviour
         {
             // 歩行時の移動速度に変更する
             _moveControl.MoveSpeed = _walkSpeed;
+
+            // 状態を遷移
+            if (_moveControl.IsMove) ChangeState<TrotState>();
+            else ChangeState<IdleState>();
         }
     }
 

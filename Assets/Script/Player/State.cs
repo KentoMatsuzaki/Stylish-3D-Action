@@ -1,8 +1,12 @@
-/// <summary>基底クラス</summary>
+using UnityEngine;
+
+/// <summary>プレイヤーの状態の基底クラス</summary>
 public abstract class State
 {
+    /// <summary>プレイヤーの制御クラス</summary>
     protected Player _player;
 
+    /// <summary>コンストラクタ</summary>
     public State(Player player)
     {
         this._player = player;
@@ -22,7 +26,10 @@ public class IdleState : State
 
     public override void Enter()
     {
-        
+        Debug.Log("現在のステート：Idle");
+
+        // アニメーションを再生する
+        _player.gameObject.GetComponent<Animator>().Play("Idle");
     }
 
     public override void Exit()
@@ -38,7 +45,7 @@ public class TrotState : State
 
     public override void Enter()
     {
-
+        Debug.Log("現在のステート：Trot");
     }
 
     public override void Exit()
@@ -54,7 +61,7 @@ public class SprintState : State
 
     public override void Enter()
     {
-
+        Debug.Log("現在のステート：Sprint");
     }
 
     public override void Exit()
@@ -70,7 +77,7 @@ public class JumpState : State
 
     public override void Enter()
     {
-
+        Debug.Log("現在のステート：Jump");
     }
 
     public override void Exit()
@@ -86,7 +93,7 @@ public class AttackState : State
 
     public override void Enter()
     {
-
+        Debug.Log("現在のステート：Attack");
     }
 
     public override void Exit()
@@ -102,7 +109,7 @@ public class DamageState : State
 
     public override void Enter()
     {
-
+        Debug.Log("現在のステート：Damage");
     }
 
     public override void Exit()
@@ -118,7 +125,7 @@ public class DeadState : State
 
     public override void Enter()
     {
-
+        Debug.Log("現在のステート：Dead");
     }
 
     public override void Exit()

@@ -449,13 +449,14 @@ GameObject:
   - component: {fileID: 1522206735}
   - component: {fileID: 1522206741}
   - component: {fileID: 1522206736}
-  - component: {fileID: 1522206743}
   - component: {fileID: 1522206744}
   - component: {fileID: 1522206749}
   - component: {fileID: 1522206748}
   - component: {fileID: 1522206747}
   - component: {fileID: 1522206746}
+  - component: {fileID: 1522206743}
   - component: {fileID: 1522206745}
+  - component: {fileID: 1522206750}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -800,6 +801,28 @@ MonoBehaviour:
   OnJump:
     m_PersistentCalls:
       m_Calls: []
+--- !u!95 &1522206750
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1522206732}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 45f879a606d93e546b7dedb0197735ce, type: 3}
+  m_Controller: {fileID: 9100000, guid: a2ba0a0069fc2684c8840be9eb4eabd3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1587467946
 GameObject:
   m_ObjectHideFlags: 0
