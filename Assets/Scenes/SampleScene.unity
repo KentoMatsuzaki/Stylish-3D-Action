@@ -622,7 +622,19 @@ MonoBehaviour:
     m_ActionId: b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba
     m_ActionName: 'Player/Next[/Keyboard/2]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1522206745}
+        m_TargetAssemblyTypeName: PlayerStateMachine, Assembly-CSharp
+        m_MethodName: OnSprint
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 641cd816-40e6-41b4-8c3d-04687c349290
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
   - m_PersistentCalls:
@@ -682,7 +694,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 544f06851df4541118f7b8a4095fe306, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 4
+  _moveSpeed: 1.5
   _turnSpeed: 15
   _brakePower: 12
   _accelerator: 6
@@ -704,6 +716,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd65ae03c9cce4440a9d38cb1c2c11c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _walkSpeed: 1.5
+  _sprintSpeed: 4
 --- !u!114 &1522206746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -754,7 +768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a438fe455bc974e68babcfff4ef6d954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gravityScale: 1
+  _gravityScale: 1.5
   _onLanding:
     m_PersistentCalls:
       m_Calls: []
@@ -773,7 +787,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b4553468b44109b38014c905d4f9e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JumpHeight: 3
+  JumpHeight: 1.5
   MaxAerialJumpCount: 0
   Drag: 0
   _turnSpeed: 0
