@@ -4,6 +4,7 @@ using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Control;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>プレイヤーの状態管理</summary>
 public class Player : MonoBehaviour
@@ -20,11 +21,18 @@ public class Player : MonoBehaviour
     /// <summary>アニメーター</summary>
     private Animator _animator;
 
+    /// <summary>現在のプレイヤーの状態</summary>
+    private PlayerState _currentState;
+
     /// <summary>歩行時の移動速度</summary>
     [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 1.2f;
 
     /// <summary>走行時の移動速度</summary>
     [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 4.0f;
+
+
+
+    [SerializeField] Text _text;
 
     void Start()
     {
@@ -32,6 +40,28 @@ public class Player : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _animator = GetComponent<Animator>();
+        // プレイヤーの状態を初期化
+        _currentState = PlayerState.Idle;
+    }
+
+    private void Update()
+    {
+        _text.text = _currentState.ToString();
+    }
+
+    //-------------------------------------------------------------------------------
+    // プレイヤーの状態
+    //-------------------------------------------------------------------------------
+
+    private enum PlayerState
+    {
+        Idle, 　// 無操作
+        Move, 　// 移動
+        Sprint, // スプリント
+        Jump, 　// ジャンプ
+        Attack, // 攻撃
+        Damage, // ダメージ
+        Die 　　// 死亡
     }
 
     //-------------------------------------------------------------------------------
@@ -48,19 +78,44 @@ public class Player : MonoBehaviour
             // 入力値を元に計算した移動方向へと移動させる
             _moveControl.Move(context.ReadValue<Vector2>());
 
-            // アニメーションを再生
-            if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("Sprint")) _animator.Play("Run");
+            // 移動状態に遷移できる場合
+            if (CanTransitionToMoveState())
+            {
+                // アニメーションを再生
+                _animator.Play("Move");
+
+                // プレイヤーの状態を更新
+                _currentState = PlayerState.Move;
+            }
         }
 
         // 入力値が閾値（Release）以下になった場合
         else if (context.canceled)
-        { 
+        {
             // 移動しないようにする
             _moveControl.Move(Vector2.zero);
 
-            // アニメーションを再生
-            if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("Sprint End")) _animator.Play("Run End");
+            // 移動状態の場合
+            if (_currentState == PlayerState.Move)
+            {
+                // アニメーションを再生
+                _animator.Play("Move End");
+
+                // プレイヤーの状態を更新
+                _currentState = PlayerState.Idle;
+            }
         }
+    }
+
+    //-------------------------------------------------------------------------------
+    // 移動に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>移動状態に遷移できるかどうか</summary>
+    private bool CanTransitionToMoveState()
+    {
+        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Move) return true;
+        return false;
     }
 
     //-------------------------------------------------------------------------------
@@ -77,8 +132,15 @@ public class Player : MonoBehaviour
             // 走行時の移動速度に変更する
             _moveControl.MoveSpeed = _sprintSpeed;
 
-            // アニメーションを再生
-            _animator.Play("Sprint");
+            // スプリント状態に遷移できる場合
+            if(CanTransitionToSprintState())
+            {
+                // アニメーションを再生
+                _animator.Play("Sprint");
+
+                // プレイヤーの状態を更新
+                _currentState = PlayerState.Sprint;
+            }
         }
 
         // 入力値が閾値（Release）以下になった場合
@@ -87,9 +149,28 @@ public class Player : MonoBehaviour
             // 歩行時の移動速度に変更する
             _moveControl.MoveSpeed = _walkSpeed;
 
-            // アニメーションを再生
-            _animator.Play("Sprint End");
+            // スプリント状態の場合
+            if(_currentState == PlayerState.Sprint)
+            {
+                // アニメーションを再生
+                if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Sprint")) _animator.Play("Sprint End");
+
+                // プレイヤーの状態を更新
+                _currentState = PlayerState.Idle;
+            } 
         }
+    }
+
+    //-------------------------------------------------------------------------------
+    // スプリントに関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>スプリント状態に遷移できるかどうか</summary>
+    private bool CanTransitionToSprintState()
+    {
+        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Move ||
+            _currentState == PlayerState.Sprint) return true;
+        return false;
     }
 
     //-------------------------------------------------------------------------------
@@ -105,6 +186,27 @@ public class Player : MonoBehaviour
         {
             // ジャンプさせる
             _jumpControl.Jump(true);
+
+            // ジャンプ状態ではない場合
+            if (_currentState != PlayerState.Jump)
+            {
+                // アニメーションを再生
+                _animator.Play("Jump Start");
+
+                // プレイヤーの状態を更新
+                _currentState = PlayerState.Jump;
+            }
         }
+    }
+
+    /// <summary>着地時の処理をするコールバックイベント</summary>
+    /// <summary>Gravityコンポーネントから呼ばれる</summary>
+    public void OnLand()
+    {
+        // アニメーションを再生
+        _animator.Play("Jump End");
+
+        // プレイヤーの状態を更新
+        _currentState = PlayerState.Idle;
     }
 }
