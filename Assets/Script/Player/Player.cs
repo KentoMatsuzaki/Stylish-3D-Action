@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Control;
 using UnityEngine;
@@ -18,6 +20,12 @@ public class Player : MonoBehaviour
     /// <summary>アニメーター</summary>
     private Animator _animator;
 
+    /// <summary>プレイヤーの状態</summary>
+    private State _currentState;
+
+    /// <summary>状態のコレクション</summary>
+    private Dictionary<Type, State> _stateDic;
+
     /// <summary>歩行時の移動速度</summary>
     [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 1.2f;
 
@@ -30,8 +38,27 @@ public class Player : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _animator = GetComponent<Animator>();
+
+        _stateDic = new Dictionary<Type, State>
+        {
+            { typeof(IdleState), new IdleState(this) },
+            { typeof(TrotState), new TrotState(this) },
+            { typeof(SprintState), new SprintState(this) },
+            { typeof(JumpState), new JumpState(this) },
+            { typeof(AttackState), new AttackState(this) },
+            { typeof(DamageState), new DamageState(this) },
+            { typeof(DeadState), new DeadState(this) },
+        };
+
+        ChangeState<IdleState>();
     }
 
+    private void ChangeState<T>() where T : State
+    {
+        _currentState.Exit();
+        _currentState = _stateDic[typeof(T)];
+        _currentState.Enter();
+    }
 
     //-------------------------------------------------------------------------------
     // 移動のコールバックイベント
