@@ -4,6 +4,7 @@ using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Control;
 using UnityEngine.UI;
 
+
 /// <summary>プレイヤーの状態管理</summary>
 public class Player : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class Player : MonoBehaviour
     /// <summary>アニメーター</summary>
     private Animator _animator;
 
+    /// <summary>コントローラー</summary>
+    private CharacterController _controller;
+
     /// <summary>現在のプレイヤーの状態</summary>
     private PlayerState _currentState = PlayerState.Idle;
 
@@ -27,6 +31,9 @@ public class Player : MonoBehaviour
 
     /// <summary>走行時の移動速度</summary>
     [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 4.0f;
+
+    /// <summary>疑似的にルートモーションを再現するか</summary>
+    private bool _applyRootMotion = false;
 
 
 
@@ -38,11 +45,17 @@ public class Player : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _animator = GetComponent<Animator>();
+        _controller = GetComponent<CharacterController>();
     }
 
     private void Update()
     {
         _text.text = _currentState.ToString();
+    }
+
+    private void LateUpdate()
+    {
+        MoveWithRootMotion();
     }
 
     //-------------------------------------------------------------------------------
@@ -232,9 +245,16 @@ public class Player : MonoBehaviour
         
     }
 
+    /// <summary>ルートモーションの適用フラグを切り替える</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void SwitchRootMotionFlag()
+    {
+        _applyRootMotion = !_applyRootMotion;
+    }
+
     /// <summary>ルートモーションに合わせてプレイヤーを移動させる</summary>
     public void MoveWithRootMotion()
     {
-        
+        if (_applyRootMotion) _controller.Move(transform.forward * Time.deltaTime * 3f);
     }
 }
