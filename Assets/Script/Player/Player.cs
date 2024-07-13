@@ -50,12 +50,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        // 移動フラグを設定
+        _animator.SetBool("IsMove", _moveControl.IsMove);
         _text.text = _currentState.ToString();
-    }
-
-    private void LateUpdate()
-    {
-        MoveWithRootMotion();
     }
 
     //-------------------------------------------------------------------------------
@@ -123,7 +120,7 @@ public class Player : MonoBehaviour
     /// <summary>移動状態に遷移できるかどうか</summary>
     private bool CanTransitionToMoveState()
     {
-        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Move) return true;
+        if (_currentState == PlayerState.Idle) return true;
         return false;
     }
 
@@ -142,7 +139,7 @@ public class Player : MonoBehaviour
             _moveControl.MoveSpeed = _sprintSpeed;
 
             // スプリント状態に遷移できる場合
-            if(CanTransitionToSprintState())
+            if(CanTransitionToSprintState() && _moveControl.IsMove)
             {
                 // アニメーションを再生
                 _animator.Play("Sprint");
@@ -165,7 +162,7 @@ public class Player : MonoBehaviour
                 _animator.Play("Sprint End");
 
                 // プレイヤーの状態を更新
-                _currentState = PlayerState.Idle;
+                _currentState = _moveControl.IsMove ? PlayerState.Move : PlayerState.Idle;
             } 
         }
     }
@@ -177,8 +174,7 @@ public class Player : MonoBehaviour
     /// <summary>スプリント状態に遷移できるかどうか</summary>
     private bool CanTransitionToSprintState()
     {
-        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Move ||
-            _currentState == PlayerState.Sprint) return true;
+        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Move) return true;
         return false;
     }
 
@@ -249,12 +245,6 @@ public class Player : MonoBehaviour
     /// <summary>アニメーションイベントから呼ばれる</summary>
     public void SwitchRootMotionFlag()
     {
-        _applyRootMotion = !_applyRootMotion;
-    }
-
-    /// <summary>ルートモーションに合わせてプレイヤーを移動させる</summary>
-    public void MoveWithRootMotion()
-    {
-        if (_applyRootMotion) _controller.Move(transform.forward * Time.deltaTime * 3f);
+        _animator.applyRootMotion = !_animator.applyRootMotion;
     }
 }
