@@ -139,7 +139,7 @@ public class Player : MonoBehaviour
             _moveControl.MoveSpeed = _sprintSpeed;
 
             // スプリント状態に遷移できる場合
-            if(CanTransitionToSprintState() && _moveControl.IsMove)
+            if(CanTransitionToSprintState())
             {
                 // アニメーションを再生
                 _animator.Play("Sprint");
@@ -174,7 +174,8 @@ public class Player : MonoBehaviour
     /// <summary>スプリント状態に遷移できるかどうか</summary>
     private bool CanTransitionToSprintState()
     {
-        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Move) return true;
+        if ((_currentState == PlayerState.Idle || _currentState == PlayerState.Move)
+            && _moveControl.IsMove) return true;
         return false;
     }
 
@@ -193,7 +194,7 @@ public class Player : MonoBehaviour
             _jumpControl.Jump(true);
 
             // ジャンプ状態ではない場合
-            if (_currentState != PlayerState.Jump)
+            if (CanTransitionToJumpState())
             {
                 // アニメーションを再生
                 _animator.Play("Jump Start");
@@ -213,6 +214,18 @@ public class Player : MonoBehaviour
 
         // プレイヤーの状態を更新
         _currentState = PlayerState.Idle;
+    }
+
+    //-------------------------------------------------------------------------------
+    // ジャンプに関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>ジャンプ状態に遷移できるかどうか</summary>
+    private bool CanTransitionToJumpState()
+    {
+        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Move ||
+            _currentState == PlayerState.Sprint) return true;
+        return false;
     }
 
     //-------------------------------------------------------------------------------
