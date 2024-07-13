@@ -52,6 +52,9 @@ public class Player : MonoBehaviour
     {
         // 移動フラグを設定
         _animator.SetBool("IsMove", _moveControl.IsMove);
+
+        _animator.applyRootMotion = _currentState == PlayerState.Attack ? true : false;
+
         _text.text = _currentState.ToString();
     }
 
@@ -68,6 +71,17 @@ public class Player : MonoBehaviour
         Attack, // 攻撃
         Damage, // ダメージ
         Die 　　// 死亡
+    }
+
+    //-------------------------------------------------------------------------------
+    // 無操作に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>プレイヤーの状態を無操作に切り替える</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void SetPlayerStateIdle()
+    {
+        _currentState = PlayerState.Idle;
     }
 
     //-------------------------------------------------------------------------------
@@ -193,7 +207,7 @@ public class Player : MonoBehaviour
             // ジャンプさせる
             _jumpControl.Jump(true);
 
-            // ジャンプ状態ではない場合
+            // ジャンプ状態に遷移できる場合
             if (CanTransitionToJumpState())
             {
                 // アニメーションを再生
@@ -239,7 +253,15 @@ public class Player : MonoBehaviour
         // 攻撃アクションが長押しされた場合
         if (context.performed)
         {
-            _animator.SetTrigger("Attack");
+            // 攻撃状態に遷移できる場合
+            if (CanTransitionToAttackState())
+            {
+                // アニメーターのトリガーを設定
+                _animator.SetTrigger("Attack");
+
+                // プレイヤーの状態を更新
+                _currentState = PlayerState.Attack;
+            }  
         }
     }
 
@@ -247,17 +269,17 @@ public class Player : MonoBehaviour
     // 攻撃に関する処理
     //-------------------------------------------------------------------------------
 
+    /// <summary>攻撃状態に遷移できるかどうか</summary>
+    private bool CanTransitionToAttackState()
+    {
+        if (_currentState == PlayerState.Idle || _currentState == PlayerState.Attack) return true;
+        return false;
+    }
+
     /// <summary>攻撃のヒット処理をするコールバックイベント</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
     public void AttackImpactEvent()
     {
         
-    }
-
-    /// <summary>ルートモーションの適用フラグを切り替える</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void SwitchRootMotionFlag()
-    {
-        _animator.applyRootMotion = !_animator.applyRootMotion;
     }
 }
