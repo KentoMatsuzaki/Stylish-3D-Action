@@ -81,14 +81,21 @@ public class Player : MonoBehaviour
     }
 
     //-------------------------------------------------------------------------------
-    // 無操作状態に関する処理
+    // プレイヤーの状態に関する処理
     //-------------------------------------------------------------------------------
 
     /// <summary>プレイヤーの状態を無操作状態に設定する</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void SetPlayerStateIdle()
+    public void SetPlayerStateIdle ()
     {
         _currentState = PlayerState.Idle;
+    }
+
+    /// <summary>プレイヤーの状態を移動状態に設定する</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void SetPlayerStateMove()
+    {
+        _currentState = PlayerState.Move;
     }
 
     //-------------------------------------------------------------------------------
@@ -99,6 +106,9 @@ public class Player : MonoBehaviour
     /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
     public void OnMove(InputAction.CallbackContext context)
     {
+        // 移動を受け付けない場合は処理を抜ける
+        if(!CanMove()) return;
+
         // 入力値が閾値（Press）以上になった場合
         if (context.performed)
         {
@@ -141,6 +151,14 @@ public class Player : MonoBehaviour
         return false;
     }
 
+    /// <summary>移動を受け付けるかどうか</summary>
+    private bool CanMove()
+    {
+        if (_currentState == PlayerState.Attack || _currentState == PlayerState.Damage ||
+            _currentState == PlayerState.Die) return false;
+        else return true;
+    }
+
     //-------------------------------------------------------------------------------
     // スプリントのコールバックイベント
     //-------------------------------------------------------------------------------
@@ -154,6 +172,9 @@ public class Player : MonoBehaviour
         {
             // 走行時の移動速度に変更する
             _moveControl.MoveSpeed = _sprintSpeed;
+
+            // フラグを有効化する
+            _animator.SetBool("IsSprint", true);
 
             // スプリント状態に遷移できる場合
             if(CanTransitionToSprintState())
@@ -169,6 +190,9 @@ public class Player : MonoBehaviour
         {
             // 歩行時の移動速度に変更する
             _moveControl.MoveSpeed = _walkSpeed;
+
+            // フラグを無効化する
+            _animator.SetBool("IsSprint", false);
 
             // スプリント状態の場合
             if(_currentState == PlayerState.Sprint)
@@ -199,19 +223,18 @@ public class Player : MonoBehaviour
     /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
     public void OnJump(InputAction.CallbackContext context)
     {
+        // ジャンプ状態に遷移できる場合
+        if (!CanTransitionToJumpState()) return;
+
         // 入力値が閾値（Press）以上になった場合
         if (context.performed)
         {
             // ジャンプさせる
             _jumpControl.Jump(true);
 
-            // ジャンプ状態に遷移できる場合
-            if (CanTransitionToJumpState())
-            {
-                // アニメーションを再生して、プレイヤーの状態を更新する
-                _animator.Play("Jump Start");
-                _currentState = PlayerState.Jump;
-            }
+            // アニメーションを再生して、プレイヤーの状態を更新する
+            _animator.Play("Jump Start");
+            _currentState = PlayerState.Jump;
         }
     }
 
@@ -221,7 +244,9 @@ public class Player : MonoBehaviour
     {
         // アニメーションを再生して、プレイヤーの状態を更新する
         _animator.Play("Jump End");
-        _currentState = _moveControl.IsMove ? PlayerState.Move : PlayerState.Idle;
+
+        if (_animator.GetBool("IsSprint")) _currentState = PlayerState.Sprint;
+        else _currentState = _moveControl.IsMove ? PlayerState.Move : PlayerState.Idle;
     }
 
     //-------------------------------------------------------------------------------
