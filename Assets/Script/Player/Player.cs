@@ -20,20 +20,26 @@ public class Player : MonoBehaviour
     /// <summary>アニメーター</summary>
     private Animator _animator;
 
-    /// <summary>コントローラー</summary>
-    private CharacterController _controller;
-
     /// <summary>現在のプレイヤーの状態</summary>
     private PlayerState _currentState = PlayerState.Idle;
 
     /// <summary>歩行時の移動速度</summary>
-    [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 1.2f;
+    [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 4.0f;
 
     /// <summary>走行時の移動速度</summary>
-    [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 4.0f;
+    [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 7.5f;
 
-    /// <summary>疑似的にルートモーションを再現するか</summary>
+    /// <summary>ルートモーションを適用するか</summary>
     private bool _applyRootMotion = false;
+
+    /// <summary>右手の攻撃クラス</summary>
+    [SerializeField, Header("右手の攻撃クラス")] private PlayerAttacker _rightSwordAttacker;
+
+    /// <summary>左手の攻撃クラス</summary>
+    [SerializeField, Header("左手の攻撃クラス")] private PlayerAttacker _leftSwordAttacker;
+
+    /// <summary>攻撃判定の持続時間</summary>
+    [SerializeField, Header("攻撃判定の持続時間")] private float _attackDuration;
 
 
 
@@ -45,7 +51,6 @@ public class Player : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _animator = GetComponent<Animator>();
-        _controller = GetComponent<CharacterController>();
     }
 
     private void Update()
@@ -53,8 +58,10 @@ public class Player : MonoBehaviour
         // 移動フラグを設定
         _animator.SetBool("IsMove", _moveControl.IsMove);
 
+        // ルートモーションの適用フラグを設定
         _animator.applyRootMotion = _currentState == PlayerState.Attack ? true : false;
 
+        // テスト用
         _text.text = _currentState.ToString();
     }
 
@@ -74,10 +81,10 @@ public class Player : MonoBehaviour
     }
 
     //-------------------------------------------------------------------------------
-    // 無操作に関する処理
+    // 無操作状態に関する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>プレイヤーの状態を無操作に切り替える</summary>
+    /// <summary>プレイヤーの状態を無操作状態に設定する</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
     public void SetPlayerStateIdle()
     {
@@ -101,10 +108,8 @@ public class Player : MonoBehaviour
             // 移動状態に遷移できる場合
             if (CanTransitionToMoveState())
             {
-                // アニメーションを再生
+                // アニメーションを再生して、プレイヤーの状態を更新する
                 _animator.Play("Move");
-
-                // プレイヤーの状態を更新
                 _currentState = PlayerState.Move;
             }
         }
@@ -112,16 +117,14 @@ public class Player : MonoBehaviour
         // 入力値が閾値（Release）以下になった場合
         else if (context.canceled)
         {
-            // 移動しないようにする
+            // 移動方向を0にする（移動させないようにする）
             _moveControl.Move(Vector2.zero);
 
             // 移動状態の場合
             if (_currentState == PlayerState.Move)
             {
-                // アニメーションを再生
+                // アニメーションを再生して、プレイヤーの状態を更新する
                 _animator.Play("Move End");
-
-                // プレイヤーの状態を更新
                 _currentState = PlayerState.Idle;
             }
         }
@@ -155,10 +158,8 @@ public class Player : MonoBehaviour
             // スプリント状態に遷移できる場合
             if(CanTransitionToSprintState())
             {
-                // アニメーションを再生
+                // アニメーションを再生して、プレイヤーの状態を更新する
                 _animator.Play("Sprint");
-
-                // プレイヤーの状態を更新
                 _currentState = PlayerState.Sprint;
             }
         }
@@ -172,10 +173,8 @@ public class Player : MonoBehaviour
             // スプリント状態の場合
             if(_currentState == PlayerState.Sprint)
             {
-                // アニメーションを再生
+                // アニメーションを再生して、プレイヤーの状態を更新する
                 _animator.Play("Sprint End");
-
-                // プレイヤーの状態を更新
                 _currentState = _moveControl.IsMove ? PlayerState.Move : PlayerState.Idle;
             } 
         }
@@ -188,8 +187,7 @@ public class Player : MonoBehaviour
     /// <summary>スプリント状態に遷移できるかどうか</summary>
     private bool CanTransitionToSprintState()
     {
-        if ((_currentState == PlayerState.Idle || _currentState == PlayerState.Move)
-            && _moveControl.IsMove) return true;
+        if (_currentState == PlayerState.Move) return true;
         return false;
     }
 
@@ -210,10 +208,8 @@ public class Player : MonoBehaviour
             // ジャンプ状態に遷移できる場合
             if (CanTransitionToJumpState())
             {
-                // アニメーションを再生
+                // アニメーションを再生して、プレイヤーの状態を更新する
                 _animator.Play("Jump Start");
-
-                // プレイヤーの状態を更新
                 _currentState = PlayerState.Jump;
             }
         }
@@ -223,11 +219,9 @@ public class Player : MonoBehaviour
     /// <summary>Gravityコンポーネントから呼ばれる</summary>
     public void OnLand()
     {
-        // アニメーションを再生
+        // アニメーションを再生して、プレイヤーの状態を更新する
         _animator.Play("Jump End");
-
-        // プレイヤーの状態を更新
-        _currentState = PlayerState.Idle;
+        _currentState = _moveControl.IsMove ? PlayerState.Move : PlayerState.Idle;
     }
 
     //-------------------------------------------------------------------------------
@@ -256,10 +250,8 @@ public class Player : MonoBehaviour
             // 攻撃状態に遷移できる場合
             if (CanTransitionToAttackState())
             {
-                // アニメーターのトリガーを設定
+                // トリガーを有効化して、プレイヤーの状態を更新する
                 _animator.SetTrigger("Attack");
-
-                // プレイヤーの状態を更新
                 _currentState = PlayerState.Attack;
             }  
         }
@@ -276,10 +268,51 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    /// <summary>攻撃のヒット処理をするコールバックイベント</summary>
+    /// <summary>攻撃がヒットする瞬間の処理をするコールバックイベント</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void AttackImpactEvent()
+    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手、2が両手）</param>
+    public void AttackImpactEvent(int handIndex)
     {
-        
+        switch(handIndex)
+        {
+            case 0:
+                TriggerRightSwordCollider();
+                break;
+
+            case 1:
+                TriggerLeftSwordCollider();
+                break;
+
+            case 2:
+                TriggerRightSwordCollider();
+                TriggerLeftSwordCollider();
+                break;
+
+            default:
+                Debug.LogError($"Unexpected handIndex value : {handIndex}");
+                break;
+        }
     }
+
+    /// <summary>右手で持っている武器のコライダーを一時的に有効化する</summary>
+    private void TriggerRightSwordCollider()
+    {
+        EnableRightSwordCollider();
+        Invoke(nameof(DisableRightSwordCollider), _attackDuration);
+    }
+
+    /// <summary>左手で持っている武器のコライダーを一時的に有効化する</summary>
+    private void TriggerLeftSwordCollider()
+    {
+        EnableLeftSwordCollider();
+        Invoke(nameof(DisableLeftSwordCollider), _attackDuration);
+    }
+
+    public void EnableRightSwordCollider() => _rightSwordAttacker.EnableCollider();
+
+    public void DisableRightSwordCollider() => _rightSwordAttacker.DisableCollider();
+
+    public void EnableLeftSwordCollider() => _leftSwordAttacker.EnableCollider();
+
+    public void DisableLeftSwordCollider() => _leftSwordAttacker.DisableCollider();
 }
