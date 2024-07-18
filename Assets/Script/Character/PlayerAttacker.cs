@@ -5,6 +5,9 @@ public class PlayerAttacker : MonoBehaviour, IAttacker
     /// <summary>プレイヤーの攻撃力</summary>
     [SerializeField, Header("攻撃力")] private int _power;
 
+    /// <summary>敵のゲームオブジェクトに付されるタグ</summary>
+    private const string enemyTag = "Enemy";
+
     /// <summary>攻撃力のプロパティ</summary>
     public int Power
     {
@@ -35,7 +38,7 @@ public class PlayerAttacker : MonoBehaviour, IAttacker
     /// <summary>攻撃が敵にヒットした際の処理</summary>
     public void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Enemy")
+        if(other.gameObject.tag == enemyTag)
         {
             Debug.Log("Hit");
         }
