@@ -38,7 +38,7 @@ public class PlayerAttacker : MonoBehaviour, IAttacker
     /// <summary>UŒ‚‚ª“G‚Éƒqƒbƒg‚µ‚½Û‚Ìˆ—</summary>
     public void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == enemyTag)
+        if(other.CompareTag(enemyTag))
         {
             Debug.Log("Hit");
         }

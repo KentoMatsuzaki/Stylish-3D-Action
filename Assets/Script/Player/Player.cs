@@ -24,13 +24,10 @@ public class Player : MonoBehaviour
     private PlayerState _currentState = PlayerState.Idle;
 
     /// <summary>歩行時の移動速度</summary>
-    [SerializeField, Header("歩行時の移動速度")] private float _walkSpeed = 4.0f;
+    [SerializeField, Header("歩行時の移動速度")] private float _defaultSpeed = 4.0f;
 
     /// <summary>走行時の移動速度</summary>
     [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 7.5f;
-
-    /// <summary>ルートモーションを適用するか</summary>
-    private bool _applyRootMotion = false;
 
     /// <summary>右手の攻撃クラス</summary>
     [SerializeField, Header("右手の攻撃クラス")] private PlayerAttacker _rightSwordAttacker;
@@ -137,6 +134,14 @@ public class Player : MonoBehaviour
                 _animator.Play("Move End");
                 _currentState = PlayerState.Idle;
             }
+
+            // スプリント状態の場合
+            else if(_currentState == PlayerState.Sprint)
+            {
+                // アニメーションを再生して、プレイヤーの状態を更新する
+                _animator.Play("Sprint End");
+                _currentState = _moveControl.IsMove ? PlayerState.Move : PlayerState.Idle;
+            }
         }
     }
 
@@ -189,7 +194,7 @@ public class Player : MonoBehaviour
         else if (context.canceled)
         {
             // 歩行時の移動速度に変更する
-            _moveControl.MoveSpeed = _walkSpeed;
+            _moveControl.MoveSpeed = _defaultSpeed;
 
             // フラグを無効化する
             _animator.SetBool("IsSprint", false);
@@ -244,9 +249,8 @@ public class Player : MonoBehaviour
     {
         // アニメーションを再生して、プレイヤーの状態を更新する
         _animator.Play("Jump End");
-
-        if (_animator.GetBool("IsSprint")) _currentState = PlayerState.Sprint;
-        else _currentState = _moveControl.IsMove ? PlayerState.Move : PlayerState.Idle;
+        //_currentState = !_moveControl.IsMove ? PlayerState.Idle :
+            //_moveControl.MoveSpeed == _defaultSpeed ? PlayerState.Move : PlayerState.Sprint;
     }
 
     //-------------------------------------------------------------------------------
