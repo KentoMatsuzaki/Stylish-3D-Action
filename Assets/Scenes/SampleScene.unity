@@ -1135,7 +1135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd65ae03c9cce4440a9d38cb1c2c11c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 4
+  _defaultSpeed: 4
   _sprintSpeed: 7.5
   _rightSwordAttacker: {fileID: 303101264}
   _leftSwordAttacker: {fileID: 1063710937}
