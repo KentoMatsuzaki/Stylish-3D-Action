@@ -4,19 +4,25 @@ using System.Collections.Generic;
 /// <summary>各種エフェクトを管理するクラス</summary>
 public class EffectManager : Singleton<EffectManager>
 {
-    /// <summary>攻撃エフェクトのプレハブのリスト</summary>
-    [SerializeField, Header("攻撃エフェクト")] private List<GameObject> _attackEffectList = new List<GameObject>();
+    /// <summary>斬撃エフェクトのリスト</summary>
+    [SerializeField, Header("斬撃エフェクト")] private List<GameObject> _slashEffectList = new List<GameObject>();
 
-    /// <summary>攻撃エフェクトの情報と対応するインデックスのマップ</summary>
-    private Dictionary<(AttackEffectType, AttackEffectCategory), int> _attackEffectIndexMap;
+    /// <summary>斬撃エフェクトの情報とインデックスのマップ</summary>
+    private Dictionary<(AttackEffectType, AttackEffectCategory), int> _slashEffectIndexMap;
+
+    /// <summary>必殺技エフェクトのリスト</summary>
+    [SerializeField, Header("斬撃エフェクト")] private List<GameObject> _ultEffectList = new List<GameObject>();
+
+    /// <summary>必殺技エフェクトの情報とインデックスのマップ</summary>
+    private Dictionary<(AttackEffectType, AttackEffectCategory), int> _ultEffectIndexMap;
 
     protected override void Awake()
     {
         // シングルトンの設定
         base.Awake();
 
-        // マップの初期化
-        _attackEffectIndexMap = new Dictionary<(AttackEffectType, AttackEffectCategory), int>
+        // 斬撃エフェクトのマップの初期化
+        _slashEffectIndexMap = new Dictionary<(AttackEffectType, AttackEffectCategory), int>
         {
             {(AttackEffectType.Ink, AttackEffectCategory.Right), 0},
             {(AttackEffectType.Ink, AttackEffectCategory.Left), 1},
@@ -30,26 +36,56 @@ public class EffectManager : Singleton<EffectManager>
             {(AttackEffectType.Blood, AttackEffectCategory.Left), 9},
             {(AttackEffectType.Water, AttackEffectCategory.Right), 10},
             {(AttackEffectType.Water, AttackEffectCategory.Left), 11},
+        };
+
+        // 必殺技エフェクトのマップの初期化
+        _ultEffectIndexMap = new Dictionary<(AttackEffectType, AttackEffectCategory), int>
+        {
             {(AttackEffectType.Wind, AttackEffectCategory.Ult), 12},
             {(AttackEffectType.Lightning, AttackEffectCategory.Ult), 13},
             {(AttackEffectType.White, AttackEffectCategory.Ult), 14}
         };
     }
 
-    /// <summary>攻撃エフェクトを表示する</summary>
-    /// <param name="pos">攻撃エフェクトの生成位置</param>
-    public void DisplayAttackEffect(AttackEffectType type, AttackEffectCategory category, Vector3 pos)
+    /// <summary>斬撃エフェクトを生成・表示する</summary>
+    /// <param name="type">斬撃エフェクトの属性</param>
+    /// <param name="category">斬撃エフェクトの分類</param>
+    /// <param name="pos">斬撃エフェクトの生成位置</param>
+    public void DisplaySlashEffect(AttackEffectType type, AttackEffectCategory category, Vector3 pos)
     { 
-        if (!_attackEffectIndexMap.TryGetValue((type, category), out int index))
+        if (!_slashEffectIndexMap.TryGetValue((type, category), out int index))
         {
             // マップに存在しない場合は、インデックスを-1に設定する（0は割り当てられているため）
             index = -1;
         }
 
         // index の値が有効かどうかをチェック
-        if (index >= 0 && index < _attackEffectList.Count)
+        if (index >= 0 && index < _slashEffectList.Count)
         {
-            Instantiate(_attackEffectList[index], pos, Quaternion.identity);
+            Instantiate(_slashEffectList[index], pos, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning($"Effect type or category not found or Index is out of range.");
+        }
+    }
+
+    /// <summary>必殺技エフェクトを生成・表示する</summary>
+    /// <param name="type">必殺技エフェクトの属性</param>
+    /// <param name="category">必殺技エフェクトの分類</param>
+    /// <param name="pos">必殺技エフェクトの生成位置</param>
+    public void DisplayUltEffect(AttackEffectType type, AttackEffectCategory category, Vector3 pos)
+    {
+        if (!_ultEffectIndexMap.TryGetValue((type, category), out int index))
+        {
+            // マップに存在しない場合は、インデックスを-1に設定する（0は割り当てられているため）
+            index = -1;
+        }
+
+        // index の値が有効かどうかをチェック
+        if (index >= 0 && index < _ultEffectList.Count)
+        {
+            Instantiate(_ultEffectList[index], pos, Quaternion.identity);
         }
         else
         {

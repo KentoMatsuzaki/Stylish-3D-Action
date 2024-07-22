@@ -323,14 +323,14 @@ public class Player : MonoBehaviour
         }
     }
 
-    /// <summary>右手で持っている武器のコライダーを一時的に有効化する</summary>
+    /// <summary>右手で持っている武器のコライダーを持続時間だけ有効化する</summary>
     private void TriggerRightSwordCollider()
     {
         EnableRightSwordCollider();
         Invoke(nameof(DisableRightSwordCollider), _attackDuration);
     }
 
-    /// <summary>左手で持っている武器のコライダーを一時的に有効化する</summary>
+    /// <summary>左手で持っている武器のコライダーを持続時間だけ有効化する</summary>
     private void TriggerLeftSwordCollider()
     {
         EnableLeftSwordCollider();
@@ -344,4 +344,12 @@ public class Player : MonoBehaviour
     public void EnableLeftSwordCollider() => _leftSwordAttacker.EnableCollider();
 
     public void DisableLeftSwordCollider() => _leftSwordAttacker.DisableCollider();
+
+    /// <summary>情報を指定して、対応する攻撃エフェクトを生成・表示する</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void DisplaySlashEffect()
+    {
+        
+        
+    }
 }
