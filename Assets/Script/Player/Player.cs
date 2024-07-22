@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Control;
 using UnityEngine.UI;
+using System;
 
 
 /// <summary>プレイヤーの状態管理</summary>
@@ -345,11 +346,17 @@ public class Player : MonoBehaviour
 
     public void DisableLeftSwordCollider() => _leftSwordAttacker.DisableCollider();
 
-    /// <summary>情報を指定して、対応する攻撃エフェクトを生成・表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void DisplaySlashEffect()
+    /// <summary>斬撃エフェクト（右）を生成・表示する</summary>
+    public void PlayRightSlashEffect(string effectType)
     {
-        
-        
+        // 引数で指定した文字列がenumにキャストできる場合、対応するエフェクトを表示する
+        if(Enum.TryParse<AttackEffectType>(effectType, out var result))
+        {
+            EffectManager.Instance.PlayRightSlashEffect(result, transform.position);
+        }
+        else
+        {
+            Debug.LogWarning("The given string is incorrect.");
+        }
     }
 }

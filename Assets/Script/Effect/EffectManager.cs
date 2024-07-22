@@ -4,79 +4,113 @@ using System.Collections.Generic;
 /// <summary>各種エフェクトを管理するクラス</summary>
 public class EffectManager : Singleton<EffectManager>
 {
-    /// <summary>斬撃エフェクトのリスト</summary>
-    [SerializeField, Header("斬撃エフェクト")] private List<GameObject> _slashEffectList = new List<GameObject>();
+    /// <summary>斬撃エフェクト（右）のリスト</summary>
+    [SerializeField, Header("斬撃エフェクト（右）")] 
+        private List<GameObject> _rightSlashEffectList = new List<GameObject>();
 
-    /// <summary>斬撃エフェクトの情報とインデックスのマップ</summary>
-    private Dictionary<(AttackEffectType, AttackEffectCategory), int> _slashEffectIndexMap;
+    /// <summary>斬撃エフェクト（右）の属性とインデックスのマップ</summary>
+    private Dictionary<AttackEffectType, int> _rightSlashEffectIndexMap;
+
+    /// <summary>斬撃エフェクト（左）のリスト</summary>
+    [SerializeField, Header("斬撃エフェクト（左）")]
+        private List<GameObject> _leftSlashEffectList = new List<GameObject>();
+
+    /// <summary>斬撃エフェクト（左）の属性とインデックスのマップ</summary>
+    private Dictionary<AttackEffectType, int> _leftSlashEffectIndexMap;
 
     /// <summary>必殺技エフェクトのリスト</summary>
-    [SerializeField, Header("斬撃エフェクト")] private List<GameObject> _ultEffectList = new List<GameObject>();
+    [SerializeField, Header("必殺技エフェクト")] 
+        private List<GameObject> _ultEffectList = new List<GameObject>();
 
     /// <summary>必殺技エフェクトの情報とインデックスのマップ</summary>
-    private Dictionary<(AttackEffectType, AttackEffectCategory), int> _ultEffectIndexMap;
+    private Dictionary<AttackEffectType, int> _ultEffectIndexMap;
 
     protected override void Awake()
     {
         // シングルトンの設定
         base.Awake();
 
-        // 斬撃エフェクトのマップの初期化
-        _slashEffectIndexMap = new Dictionary<(AttackEffectType, AttackEffectCategory), int>
+        // 斬撃エフェクト（右）のマップの初期化
+        _rightSlashEffectIndexMap = new Dictionary<AttackEffectType, int>
         {
-            {(AttackEffectType.Ink, AttackEffectCategory.Right), 0},
-            {(AttackEffectType.Ink, AttackEffectCategory.Left), 1},
-            {(AttackEffectType.BlueFlame, AttackEffectCategory.Right), 2},
-            {(AttackEffectType.BlueFlame, AttackEffectCategory.Left), 3},
-            {(AttackEffectType.RedFlame, AttackEffectCategory.Right), 4},
-            {(AttackEffectType.RedFlame, AttackEffectCategory.Left), 5},
-            {(AttackEffectType.Nebula, AttackEffectCategory.Right), 6},
-            {(AttackEffectType.Nebula, AttackEffectCategory.Left), 7},
-            {(AttackEffectType.Blood, AttackEffectCategory.Right), 8},
-            {(AttackEffectType.Blood, AttackEffectCategory.Left), 9},
-            {(AttackEffectType.Water, AttackEffectCategory.Right), 10},
-            {(AttackEffectType.Water, AttackEffectCategory.Left), 11},
+            {AttackEffectType.Ink, 0},
+            {AttackEffectType.RedFlame, 1},
+            {AttackEffectType.BlueFlame, 2},
+            {AttackEffectType.Nebula, 3},
+            {AttackEffectType.Blood, 4},
+            {AttackEffectType.Water, 5}
+        };
+
+        // 斬撃エフェクト（左）のマップの初期化
+        _leftSlashEffectIndexMap = new Dictionary<AttackEffectType, int>
+        {
+            {AttackEffectType.Ink, 0},
+            {AttackEffectType.RedFlame, 1},
+            {AttackEffectType.BlueFlame, 2},
+            {AttackEffectType.Nebula, 3},
+            {AttackEffectType.Blood, 4},
+            {AttackEffectType.Water, 5}
         };
 
         // 必殺技エフェクトのマップの初期化
-        _ultEffectIndexMap = new Dictionary<(AttackEffectType, AttackEffectCategory), int>
+        _ultEffectIndexMap = new Dictionary<AttackEffectType, int>
         {
-            {(AttackEffectType.Wind, AttackEffectCategory.Ult), 12},
-            {(AttackEffectType.Lightning, AttackEffectCategory.Ult), 13},
-            {(AttackEffectType.White, AttackEffectCategory.Ult), 14}
+            {AttackEffectType.Wind , 0},
+            {AttackEffectType.Lightning, 1},
+            {AttackEffectType.White, 2}
         };
     }
 
-    /// <summary>斬撃エフェクトを生成・表示する</summary>
+    /// <summary>斬撃エフェクト（右）を生成・表示する</summary>
     /// <param name="type">斬撃エフェクトの属性</param>
-    /// <param name="category">斬撃エフェクトの分類</param>
     /// <param name="pos">斬撃エフェクトの生成位置</param>
-    public void DisplaySlashEffect(AttackEffectType type, AttackEffectCategory category, Vector3 pos)
+    public void PlayRightSlashEffect(AttackEffectType type, Vector3 pos)
     { 
-        if (!_slashEffectIndexMap.TryGetValue((type, category), out int index))
+        if (!_rightSlashEffectIndexMap.TryGetValue((type), out int index))
         {
             // マップに存在しない場合は、インデックスを-1に設定する（0は割り当てられているため）
             index = -1;
         }
 
         // index の値が有効かどうかをチェック
-        if (index >= 0 && index < _slashEffectList.Count)
+        if (index >= 0 && index < _rightSlashEffectList.Count)
         {
-            Instantiate(_slashEffectList[index], pos, Quaternion.identity);
+            Instantiate(_rightSlashEffectList[index], pos, Quaternion.identity);
         }
         else
         {
-            Debug.LogWarning($"Effect type or category not found or Index is out of range.");
+            Debug.LogWarning($"Effect type not found or Index is out of range.");
+        }
+    }
+
+    /// <summary>斬撃エフェクト（左）を生成・表示する</summary>
+    /// <param name="type">斬撃エフェクトの属性</param>
+    /// <param name="pos">斬撃エフェクトの生成位置</param>
+    public void PlayLeftSlashEffect(AttackEffectType type, Vector3 pos)
+    {
+        if (!_leftSlashEffectIndexMap.TryGetValue((type), out int index))
+        {
+            // マップに存在しない場合は、インデックスを-1に設定する（0は割り当てられているため）
+            index = -1;
+        }
+
+        // index の値が有効かどうかをチェック
+        if (index >= 0 && index < _leftSlashEffectList.Count)
+        {
+            Instantiate(_leftSlashEffectList[index], pos, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning($"Effect type not found or Index is out of range.");
         }
     }
 
     /// <summary>必殺技エフェクトを生成・表示する</summary>
     /// <param name="type">必殺技エフェクトの属性</param>
-    /// <param name="category">必殺技エフェクトの分類</param>
     /// <param name="pos">必殺技エフェクトの生成位置</param>
-    public void DisplayUltEffect(AttackEffectType type, AttackEffectCategory category, Vector3 pos)
+    public void DisplayUltEffect(AttackEffectType type, Vector3 pos)
     {
-        if (!_ultEffectIndexMap.TryGetValue((type, category), out int index))
+        if (!_ultEffectIndexMap.TryGetValue((type), out int index))
         {
             // マップに存在しない場合は、インデックスを-1に設定する（0は割り当てられているため）
             index = -1;
@@ -89,7 +123,7 @@ public class EffectManager : Singleton<EffectManager>
         }
         else
         {
-            Debug.LogWarning($"Effect type or category not found or Index is out of range.");
+            Debug.LogWarning($"Effect type not found or Index is out of range.");
         }
     }
 }
