@@ -39,7 +39,8 @@ public class Player : MonoBehaviour
     /// <summary>攻撃判定の持続時間</summary>
     [SerializeField, Header("攻撃判定の持続時間")] private float _attackDuration;
 
-
+    /// <summary>攻撃の属性</summary>
+    [SerializeField, Header("攻撃の属性")] public AttackEffectType _attackEffectType;
 
     [SerializeField] Text _text;
 
@@ -305,14 +306,17 @@ public class Player : MonoBehaviour
     {
         switch(handIndex)
         {
+            // 右手
             case 0:
                 TriggerRightSwordCollider();
                 break;
 
+            // 左手
             case 1:
                 TriggerLeftSwordCollider();
                 break;
 
+            // 両手
             case 2:
                 TriggerRightSwordCollider();
                 TriggerLeftSwordCollider();
@@ -346,19 +350,31 @@ public class Player : MonoBehaviour
 
     public void DisableLeftSwordCollider() => _leftSwordAttacker.DisableCollider();
 
-    /// <summary>斬撃エフェクト（右）を生成・表示する</summary>
-    public void PlayRightSlashEffect(string effectType)
+    /// <summary>斬撃エフェクトを生成・表示する</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手、2が両手）</param>
+    public void PlaySlashEffect(int handIndex)
     {
-        // 引数で指定した文字列がenumにキャストできる場合、対応するエフェクトを表示する
-        if(Enum.TryParse<AttackEffectType>(effectType, out var result))
+        // プレイヤーの座標をもとに算出した位置に生成する
+        Vector3 playerPos = transform.position;
+        var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
+
+        switch (handIndex)
         {
-            Vector3 playerPos = transform.position;
-            var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
-            EffectManager.Instance.PlayRightSlashEffect(result, effectPos, transform);
-        }
-        else
-        {
-            Debug.LogWarning("The given string is incorrect.");
-        }
+            // 右手
+            case 0:
+                EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, true);
+                break;
+
+            // 左手
+            case 1:
+                EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, false);
+                break;
+
+            // 両手
+            case 2:
+                Debug.LogError($"Unexpected handIndex value : {handIndex}");    
+                break;
+        } 
     }
 }
