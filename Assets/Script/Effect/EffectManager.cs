@@ -64,7 +64,7 @@ public class EffectManager : Singleton<EffectManager>
     /// <summary>斬撃エフェクト（右）を生成・表示する</summary>
     /// <param name="type">斬撃エフェクトの属性</param>
     /// <param name="pos">斬撃エフェクトの生成位置</param>
-    public void PlayRightSlashEffect(AttackEffectType type, Vector3 pos)
+    public void PlayRightSlashEffect(AttackEffectType type, Vector3 pos, Transform player)
     { 
         if (!_rightSlashEffectIndexMap.TryGetValue((type), out int index))
         {
@@ -72,10 +72,12 @@ public class EffectManager : Singleton<EffectManager>
             index = -1;
         }
 
-        // index の値が有効かどうかをチェック
+        // indexの値が正常である場合、エフェクトを生成してプレイヤーの方向に合わせる
         if (index >= 0 && index < _rightSlashEffectList.Count)
         {
-            Instantiate(_rightSlashEffectList[index], pos, Quaternion.identity);
+            var effect = Instantiate(_rightSlashEffectList[index], pos, Quaternion.identity, transform);
+            effect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+            effect.transform.Rotate(0, -180, 0, Space.Self);
         }
         else
         {
@@ -86,7 +88,7 @@ public class EffectManager : Singleton<EffectManager>
     /// <summary>斬撃エフェクト（左）を生成・表示する</summary>
     /// <param name="type">斬撃エフェクトの属性</param>
     /// <param name="pos">斬撃エフェクトの生成位置</param>
-    public void PlayLeftSlashEffect(AttackEffectType type, Vector3 pos)
+    public void PlayLeftSlashEffect(AttackEffectType type, Vector3 pos, Transform player)
     {
         if (!_leftSlashEffectIndexMap.TryGetValue((type), out int index))
         {
@@ -94,10 +96,12 @@ public class EffectManager : Singleton<EffectManager>
             index = -1;
         }
 
-        // index の値が有効かどうかをチェック
+        // indexの値が正常である場合、エフェクトを生成してプレイヤーの方向に合わせる
         if (index >= 0 && index < _leftSlashEffectList.Count)
         {
-            Instantiate(_leftSlashEffectList[index], pos, Quaternion.identity);
+            var effect = Instantiate(_rightSlashEffectList[index], pos, Quaternion.identity, transform);
+            effect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+            effect.transform.Rotate(0, -180, 0, Space.Self);
         }
         else
         {
@@ -108,7 +112,7 @@ public class EffectManager : Singleton<EffectManager>
     /// <summary>必殺技エフェクトを生成・表示する</summary>
     /// <param name="type">必殺技エフェクトの属性</param>
     /// <param name="pos">必殺技エフェクトの生成位置</param>
-    public void DisplayUltEffect(AttackEffectType type, Vector3 pos)
+    public void DisplayUltEffect(AttackEffectType type, Vector3 pos, Transform player)
     {
         if (!_ultEffectIndexMap.TryGetValue((type), out int index))
         {
@@ -116,10 +120,12 @@ public class EffectManager : Singleton<EffectManager>
             index = -1;
         }
 
-        // index の値が有効かどうかをチェック
+        // indexの値が正常である場合、エフェクトを生成してプレイヤーの方向に合わせる
         if (index >= 0 && index < _ultEffectList.Count)
         {
-            Instantiate(_ultEffectList[index], pos, Quaternion.identity);
+            var effect = Instantiate(_rightSlashEffectList[index], pos, Quaternion.identity, transform);
+            effect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+            effect.transform.Rotate(0, -180, 0, Space.Self);
         }
         else
         {

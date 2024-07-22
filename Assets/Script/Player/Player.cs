@@ -250,8 +250,8 @@ public class Player : MonoBehaviour
     {
         // アニメーションを再生して、プレイヤーの状態を更新する
         _animator.Play("Jump End");
-        //_currentState = !_moveControl.IsMove ? PlayerState.Idle :
-            //_moveControl.MoveSpeed == _defaultSpeed ? PlayerState.Move : PlayerState.Sprint;
+        _currentState = !_moveControl.IsMove ? PlayerState.Idle :
+        _moveControl.MoveSpeed == _defaultSpeed ? PlayerState.Move : PlayerState.Sprint;
     }
 
     //-------------------------------------------------------------------------------
@@ -352,7 +352,9 @@ public class Player : MonoBehaviour
         // 引数で指定した文字列がenumにキャストできる場合、対応するエフェクトを表示する
         if(Enum.TryParse<AttackEffectType>(effectType, out var result))
         {
-            EffectManager.Instance.PlayRightSlashEffect(result, transform.position);
+            Vector3 playerPos = transform.position;
+            var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
+            EffectManager.Instance.PlayRightSlashEffect(result, effectPos, transform);
         }
         else
         {
