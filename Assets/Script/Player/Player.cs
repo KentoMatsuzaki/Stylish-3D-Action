@@ -355,26 +355,9 @@ public class Player : MonoBehaviour
     /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手、2が両手）</param>
     public void PlaySlashEffect(int handIndex)
     {
-        // プレイヤーの座標をもとに算出した位置に生成する
+        // プレイヤーの座標を元に、正しい位置にエフェクトを生成する
         Vector3 playerPos = transform.position;
         var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
-
-        switch (handIndex)
-        {
-            // 右手
-            case 0:
-                EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, true);
-                break;
-
-            // 左手
-            case 1:
-                EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, false);
-                break;
-
-            // 両手
-            case 2:
-                Debug.LogError($"Unexpected handIndex value : {handIndex}");    
-                break;
-        } 
+        EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, handIndex);
     }
 }

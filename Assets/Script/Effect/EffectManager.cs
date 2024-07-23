@@ -18,6 +18,25 @@ public class EffectManager : Singleton<EffectManager>
     /// <summary>必殺技エフェクトの情報とインデックスのマップ</summary>
     private Dictionary<AttackEffectType, int> _ultEffectIndexMap;
 
+    /// <summary>斬撃エフェクトの回転量を示す定数。X軸方向の回転角度（0度）。</summary>
+    private const float SLASH_EFFECT_X_ANGLE = 0f;
+
+    /// <summary>斬撃エフェクトの回転量を示す定数。Y軸方向の回転角度（180度）。</summary>
+    private const float SLASH_EFFECT_Y_ANGLE = 180f;
+
+    /// <summary>斬撃エフェクトの回転量を示す定数。右方向のZ軸回転角度（180度）。</summary>
+    private const float SLASH_EFFECT_Z_ANGLE_RIGHT = 180f;
+
+    /// <summary>斬撃エフェクトの回転量を示す定数。右斜め方向のZ軸回転角度（-135度）。</summary>
+    private const float SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL = -135f;
+
+    /// <summary>斬撃エフェクトの回転量を示す定数。左方向のZ軸回転角度（0度）。</summary>
+    private const float SLASH_EFFECT_Z_ANGLE_LEFT = 0f;
+
+    /// <summary>斬撃エフェクトの回転量を示す定数。左斜め方向のZ軸回転角度（-45度）。</summary>
+    private const float SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL = -45f;
+
+
     protected override void Awake()
     {
         // シングルトンの設定
@@ -44,34 +63,61 @@ public class EffectManager : Singleton<EffectManager>
     }
 
     /// <summary>斬撃エフェクトを生成・表示する</summary>
-    /// <param name="type">斬撃エフェクトの属性</param>
-    /// <param name="pos">斬撃エフェクトの生成位置</param>
-    /// <param name="player">プレイヤーのトランスフォーム</param>
-    /// <param name="isRightEffect">エフェクトが右向きかどうか</param>
-    public void PlaySlashEffect(AttackEffectType type, Vector3 pos, Transform player, bool isRightEffect)
-    { 
-        if (!_slashEffectIndexMap.TryGetValue((type), out int index))
-        {
-            // マップに存在しない場合は、インデックスを-1に設定する（0は割り当てられているため）
-            index = -1;
-        }
+    /// <param name="type">斬撃の属性</param>
+    /// <param name="pos">生成位置</param>
+    /// <param name="player">プレイヤーの位置</param>
+    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手、2が両手）</param>
+    public void PlaySlashEffect(AttackEffectType type, Vector3 pos, Transform player, int handIndex)
+    {
+        // マップに存在しない場合は、インデックスを-1に設定する（0は既に割り当てられているため）
+        if (!_slashEffectIndexMap.TryGetValue((type), out int index)) index = -1;
 
         // indexの値が正常である場合
         if (index >= 0 && index < _slashEffectList.Count)
         {
-            // エフェクトを生成してプレイヤーの方向に合わせる
-            var effect = Instantiate(_slashEffectList[index], pos, Quaternion.identity, transform);
-            effect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+            switch (handIndex)
+            {
+                // 右手
+                case 0:
+                    // 右向きのエフェクトを生成し、正しい方向に回転させる
+                    var rightEffect = Instantiate(_slashEffectList[index], pos, Quaternion.identity, transform);
+                    rightEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+                    rightEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, SLASH_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_RIGHT, Space.Self);
+                    break;
 
-            // 右向きのエフェクトの場合、y軸とz軸を中心に180度回転させる
-            if (isRightEffect) effect.transform.Rotate(0, 180, 180, Space.Self);
+                // 左手
+                case 1:
+                    // 左向きのエフェクトを生成し、正しい方向に回転させる
+                    var leftEffect = Instantiate(_slashEffectList[index], pos, Quaternion.identity, transform);
+                    leftEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+                    leftEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, SLASH_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_LEFT, Space.Self);
+                    break;
 
-            // 左向きのエフェクトの場合、y軸を中心に180度回転させる
-            else effect.transform.Rotate(0, 180, 0, Space.Self);
+                // 両手
+                case 2:
+                    // 斜め右向きのエフェクトを生成し、正しい方向に回転させる
+                    var diagonalRightEffect = Instantiate(_slashEffectList[index], pos, Quaternion.identity, transform);
+                    diagonalRightEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+                    diagonalRightEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, SLASH_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL, Space.Self);
+
+                    // 斜め左向きのエフェクトを生成し、正しい方向に回転させる
+                    var diagonalLeftEffect = Instantiate(_slashEffectList[index], pos, Quaternion.identity, transform);
+                    diagonalLeftEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+                    diagonalLeftEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, SLASH_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL, Space.Self);
+
+                    break;
+
+                // 例外的な処理
+                default:
+                    Debug.LogError($"Unexpected handIndex value : {handIndex}");
+                    break;
+            }
         }
+
+        // 不正なindexである場合
         else
         {
-            Debug.LogWarning($"Effect type not found or Index is out of range.");
+            Debug.LogError($"Effect type not found or Index is out of range.");
         }
     }
 
@@ -93,6 +139,8 @@ public class EffectManager : Singleton<EffectManager>
             effect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
             effect.transform.Rotate(0, -180, 0, Space.Self);
         }
+
+        // 不正なindexである場合
         else
         {
             Debug.LogWarning($"Effect type not found or Index is out of range.");

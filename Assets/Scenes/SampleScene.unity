@@ -1202,6 +1202,7 @@ MonoBehaviour:
   _rightSwordAttacker: {fileID: 303101264}
   _leftSwordAttacker: {fileID: 1063710937}
   _attackDuration: 0.1
+  _attackEffectType: 0
   _text: {fileID: 1856680558}
 --- !u!114 &1522206746
 MonoBehaviour:
