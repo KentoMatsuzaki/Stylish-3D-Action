@@ -47,6 +47,8 @@ public class Player : MonoBehaviour
     /// <summary>特殊攻撃に消費されるエネルギー</summary>
     [SerializeField, Header("特殊攻撃のエネルギー")] public float _altAttackEnergy = 1f;
 
+    public float ALT_ATTACK_Y_POS = 3f;
+
     [SerializeField] Text _text;
 
     void Start()
@@ -64,7 +66,8 @@ public class Player : MonoBehaviour
         _animator.SetBool("IsMove", _moveControl.IsMove);
 
         // ルートモーションの適用フラグを設定
-        _animator.applyRootMotion = _currentState == PlayerState.Attack ? true : false;
+        if (_currentState == PlayerState.Attack)
+            _animator.applyRootMotion = true;
 
         // テスト用
         _text.text = _currentState.ToString();
@@ -383,10 +386,12 @@ public class Player : MonoBehaviour
             // 特殊攻撃状態に遷移できる場合
             if (CanTransitionToAltAttackState())
             {
+                _jumpControl.JumpHeight = 5f;
+                _jumpControl.Jump(true);
+
                 // アニメーションを再生して、プレイヤーの状態を更新する
                 _animator.Play("Alt Attack 1");
                 _currentState = PlayerState.AltAttack;
-                _gravity.GravityScale = 0f;
             }
 
             // 特殊攻撃状態である場合
