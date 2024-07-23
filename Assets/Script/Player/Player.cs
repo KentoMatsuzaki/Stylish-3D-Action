@@ -3,8 +3,7 @@ using UnityEngine.InputSystem;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Control;
 using UnityEngine.UI;
-using System;
-
+using Unity.TinyCharacterController.Effect;
 
 /// <summary>プレイヤーの状態管理</summary>
 public class Player : MonoBehaviour
@@ -17,6 +16,9 @@ public class Player : MonoBehaviour
 
     /// <summary>接地判定</summary>
     private GroundCheck _groundCheck;
+
+    /// <summary>重力制御</summary>
+    private Gravity _gravity;
 
     /// <summary>アニメーター</summary>
     private Animator _animator;
@@ -42,6 +44,9 @@ public class Player : MonoBehaviour
     /// <summary>攻撃の属性</summary>
     [SerializeField, Header("攻撃の属性")] public AttackEffectType _attackEffectType;
 
+    /// <summary>特殊攻撃に消費されるエネルギー</summary>
+    [SerializeField, Header("特殊攻撃のエネルギー")] public float _altAttackEnergy = 1f;
+
     [SerializeField] Text _text;
 
     void Start()
@@ -49,6 +54,7 @@ public class Player : MonoBehaviour
         _moveControl = GetComponent<MoveControl>();
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
+        _gravity = GetComponent<Gravity>();
         _animator = GetComponent<Animator>();
     }
 
@@ -75,6 +81,7 @@ public class Player : MonoBehaviour
         Sprint, // スプリント
         Jump, 　// ジャンプ
         Attack, // 攻撃
+        AltAttack, // 特殊攻撃
         Damage, // ダメージ
         Die 　　// 死亡
     }
@@ -108,10 +115,10 @@ public class Player : MonoBehaviour
         // 移動を受け付けない場合は処理を抜ける
         if(!CanMove()) return;
 
-        // 入力値が閾値（Press）以上になった場合
+        // 移動アクションに割り当てられたキーバインドが入力された場合
         if (context.performed)
         {
-            // 入力値を元に計算した移動方向へと移動させる
+            // 入力値の移動方向へ移動させる
             _moveControl.Move(context.ReadValue<Vector2>());
 
             // 移動状態に遷移できる場合
@@ -123,7 +130,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // 入力値が閾値（Release）以下になった場合
+        // 移動アクションに割り当てられたキーバインドが離された場合
         else if (context.canceled)
         {
             // 移動方向を0にする（移動させないようにする）
@@ -161,8 +168,8 @@ public class Player : MonoBehaviour
     /// <summary>移動を受け付けるかどうか</summary>
     private bool CanMove()
     {
-        if (_currentState == PlayerState.Attack || _currentState == PlayerState.Damage ||
-            _currentState == PlayerState.Die) return false;
+        if (_currentState == PlayerState.Attack || _currentState == PlayerState.AltAttack || 
+            _currentState == PlayerState.Damage || _currentState == PlayerState.Die) return false;
         else return true;
     }
 
@@ -174,7 +181,7 @@ public class Player : MonoBehaviour
     /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
     public void OnSprint(InputAction.CallbackContext context)
     {
-        // 入力値が閾値（Press）以上になった場合
+        // スプリントアクションに割り当てられたキーバインドが入力された場合
         if (context.performed)
         {
             // 走行時の移動速度に変更する
@@ -192,7 +199,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // 入力値が閾値（Release）以下になった場合
+        // スプリントアクションに割り当てられたキーバインドが離された場合
         else if (context.canceled)
         {
             // 歩行時の移動速度に変更する
@@ -233,14 +240,14 @@ public class Player : MonoBehaviour
         // ジャンプ状態に遷移できる場合
         if (!CanTransitionToJumpState()) return;
 
-        // 入力値が閾値（Press）以上になった場合
+        // ジャンプアクションに割り当てられたキーバインドが入力された場合
         if (context.performed)
         {
             // ジャンプさせる
             _jumpControl.Jump(true);
 
             // アニメーションを再生して、プレイヤーの状態を更新する
-            _animator.Play("Jump Start");
+            _animator.Play("Jump");
             _currentState = PlayerState.Jump;
         }
     }
@@ -250,7 +257,8 @@ public class Player : MonoBehaviour
     public void OnLand()
     {
         // アニメーションを再生して、プレイヤーの状態を更新する
-        _animator.Play("Jump End");
+        _gravity.GravityScale = 1.5f;
+        _animator.Play("Land");
         _currentState = !_moveControl.IsMove ? PlayerState.Idle :
         _moveControl.MoveSpeed == _defaultSpeed ? PlayerState.Move : PlayerState.Sprint;
     }
@@ -275,13 +283,13 @@ public class Player : MonoBehaviour
     /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
     public void OnAttack(InputAction.CallbackContext context)
     {
-        // 攻撃アクションが長押しされた場合
+        // 攻撃アクションに割り当てられたキーバインドが入力された場合
         if (context.performed)
         {
             // 攻撃状態に遷移できる場合
             if (CanTransitionToAttackState())
             {
-                // トリガーを有効化して、プレイヤーの状態を更新する
+                // 攻撃トリガーを有効化して、プレイヤーの状態を更新する
                 _animator.SetTrigger("Attack");
                 _currentState = PlayerState.Attack;
             }  
@@ -359,5 +367,45 @@ public class Player : MonoBehaviour
         Vector3 playerPos = transform.position;
         var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
         EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, handIndex);
+    }
+
+    //-------------------------------------------------------------------------------
+    // 特殊攻撃のコールバックイベント
+    //-------------------------------------------------------------------------------
+
+    /// <summary>特殊攻撃の制御をするコールバックイベント</summary>
+    /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
+    public void OnAltAttack(InputAction.CallbackContext context)
+    {
+        // 特殊攻撃アクションに割り当てられたキーバインドが入力された場合
+        if (context.performed)
+        {
+            // 特殊攻撃状態に遷移できる場合
+            if (CanTransitionToAltAttackState())
+            {
+                // アニメーションを再生して、プレイヤーの状態を更新する
+                _animator.Play("Alt Attack 1");
+                _currentState = PlayerState.AltAttack;
+                _gravity.GravityScale = 0f;
+            }
+
+            // 特殊攻撃状態である場合
+            else if(_currentState == PlayerState.AltAttack)
+            {
+                // 特殊攻撃トリガーを有効化する
+                _animator.SetTrigger("AltAtk");
+            }
+        }
+    }
+
+    //-------------------------------------------------------------------------------
+    // 特殊攻撃に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>特殊攻撃状態に遷移できるかどうか</summary>
+    private bool CanTransitionToAltAttackState()
+    {
+        if (_currentState == PlayerState.Idle && _altAttackEnergy > 0) return true;
+        return false;
     }
 }
