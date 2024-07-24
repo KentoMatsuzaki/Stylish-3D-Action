@@ -1207,7 +1207,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1522206745}
         m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: OnAltAttack
+        m_MethodName: OnFloat
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1264,7 +1264,8 @@ MonoBehaviour:
   _leftSwordAttacker: {fileID: 1063710937}
   _attackDuration: 0.1
   _attackEffectType: 0
-  _altAttackEnergy: 1
+  _floatEnergy: 1
+  ALT_ATTACK_Y_POS: 3
   _text: {fileID: 1856680558}
 --- !u!114 &1522206746
 MonoBehaviour:

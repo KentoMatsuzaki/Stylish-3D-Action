@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Control;
 using UnityEngine.UI;
+using Unity.TinyCharacterController.Brain;
 using Unity.TinyCharacterController.Effect;
 
 /// <summary>プレイヤーの状態管理</summary>
@@ -19,6 +20,9 @@ public class Player : MonoBehaviour
 
     /// <summary>重力制御</summary>
     private Gravity _gravity;
+
+    /// <summary>ロジック制御</summary>
+    private CharacterBrain _brain;
 
     /// <summary>アニメーター</summary>
     private Animator _animator;
@@ -44,8 +48,8 @@ public class Player : MonoBehaviour
     /// <summary>攻撃の属性</summary>
     [SerializeField, Header("攻撃の属性")] public AttackEffectType _attackEffectType;
 
-    /// <summary>特殊攻撃に消費されるエネルギー</summary>
-    [SerializeField, Header("特殊攻撃のエネルギー")] public float _altAttackEnergy = 1f;
+    /// <summary>浮遊に消費されるエネルギー</summary>
+    [SerializeField, Header("浮遊エネルギー")] public float _floatEnergy = 1f;
 
     public float ALT_ATTACK_Y_POS = 3f;
 
@@ -57,6 +61,7 @@ public class Player : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _gravity = GetComponent<Gravity>();
+        _brain = GetComponent<CharacterBrain>();
         _animator = GetComponent<Animator>();
     }
 
@@ -66,8 +71,7 @@ public class Player : MonoBehaviour
         _animator.SetBool("IsMove", _moveControl.IsMove);
 
         // ルートモーションの適用フラグを設定
-        if (_currentState == PlayerState.Attack)
-            _animator.applyRootMotion = true;
+        _animator.applyRootMotion = _currentState == PlayerState.Attack ? true : false;
 
         // テスト用
         _text.text = _currentState.ToString();
@@ -84,7 +88,7 @@ public class Player : MonoBehaviour
         Sprint, // スプリント
         Jump, 　// ジャンプ
         Attack, // 攻撃
-        AltAttack, // 特殊攻撃
+        Float, // 浮遊
         Damage, // ダメージ
         Die 　　// 死亡
     }
@@ -171,7 +175,7 @@ public class Player : MonoBehaviour
     /// <summary>移動を受け付けるかどうか</summary>
     private bool CanMove()
     {
-        if (_currentState == PlayerState.Attack || _currentState == PlayerState.AltAttack || 
+        if (_currentState == PlayerState.Attack || _currentState == PlayerState.Float || 
             _currentState == PlayerState.Damage || _currentState == PlayerState.Die) return false;
         else return true;
     }
@@ -260,10 +264,12 @@ public class Player : MonoBehaviour
     public void OnLand()
     {
         // アニメーションを再生して、プレイヤーの状態を更新する
-        _gravity.GravityScale = 1.5f;
         _animator.Play("Land");
         _currentState = !_moveControl.IsMove ? PlayerState.Idle :
-        _moveControl.MoveSpeed == _defaultSpeed ? PlayerState.Move : PlayerState.Sprint;
+            _moveControl.MoveSpeed == _defaultSpeed ? PlayerState.Move : PlayerState.Sprint;
+
+        _jumpControl.JumpHeight = 2f;
+        _gravity.GravityScale = 1.5f;
     }
 
     //-------------------------------------------------------------------------------
@@ -373,44 +379,64 @@ public class Player : MonoBehaviour
     }
 
     //-------------------------------------------------------------------------------
-    // 特殊攻撃のコールバックイベント
+    // 浮遊のコールバックイベント
     //-------------------------------------------------------------------------------
 
-    /// <summary>特殊攻撃の制御をするコールバックイベント</summary>
+    /// <summary>浮遊の制御をするコールバックイベント</summary>
     /// <summary>PlayerInputコンポーネントから呼ばれる</summary>
-    public void OnAltAttack(InputAction.CallbackContext context)
+    public void OnFloat(InputAction.CallbackContext context)
     {
-        // 特殊攻撃アクションに割り当てられたキーバインドが入力された場合
+        // 浮遊アクションに割り当てられたキーバインドが入力された場合
         if (context.performed)
         {
-            // 特殊攻撃状態に遷移できる場合
-            if (CanTransitionToAltAttackState())
+            // 浮遊状態に遷移できる場合
+            if (CanTransitionToFloatState())
             {
+                // 浮遊させる
                 _jumpControl.JumpHeight = 3f;
-                _jumpControl.Jump(true);
+                _jumpControl.Jump();
 
                 // アニメーションを再生して、プレイヤーの状態を更新する
-                _animator.Play("Alt Jump");
-                _currentState = PlayerState.AltAttack;
+                _animator.Play("Float Jump");
+                _currentState = PlayerState.Float;
             }
 
-            // 特殊攻撃状態である場合
-            else if(_currentState == PlayerState.AltAttack)
+            // 浮遊状態である場合
+            else if(_currentState == PlayerState.Float)
             {
-                // 特殊攻撃トリガーを有効化する
-                _animator.SetTrigger("AltAtk");
+                _brain.SetFreezeAxis(false, false, false);
             }
         }
     }
 
     //-------------------------------------------------------------------------------
-    // 特殊攻撃に関する処理
+    // 浮遊に関する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>特殊攻撃状態に遷移できるかどうか</summary>
-    private bool CanTransitionToAltAttackState()
+    /// <summary>浮遊状態に遷移できるかどうか</summary>
+    private bool CanTransitionToFloatState()
     {
-        if (_currentState == PlayerState.Idle && _altAttackEnergy > 0) return true;
+        if (_currentState == PlayerState.Idle && _floatEnergy > 0) return true;
         return false;
+    }
+
+    /// <summary>浮遊イベント</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void Float()
+    {
+        FreezeYAxis();
+        WeakenGravity();
+    }
+
+    /// <summary>プレイヤーのY座標を固定する</summary>
+    private void FreezeYAxis()
+    {
+        _brain.SetFreezeAxis(false, true, false);
+    }
+
+    /// <summary>重力を弱める</summary>
+    private void WeakenGravity()
+    {
+        _gravity.GravityScale = 0.5f;
     }
 }

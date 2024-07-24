@@ -87,7 +87,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AltAttack",
+                    "name": "Float",
                     "type": "Button",
                     "id": "c5cd23f5-a4ae-4c61-8efb-a698386a00a5",
                     "expectedControlType": "",
@@ -489,7 +489,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AltAttack",
+                    "action": "Float",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
