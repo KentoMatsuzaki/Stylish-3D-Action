@@ -49,7 +49,13 @@ public class Player : MonoBehaviour
     [SerializeField, Header("攻撃の属性")] public AttackEffectType _attackEffectType;
 
     /// <summary>浮遊に消費されるエネルギー</summary>
-    [SerializeField, Header("浮遊エネルギー")] public float _floatEnergy = 1f;
+    [SerializeField, Header("浮遊エネルギー")] private float _floatEnergy = 1f;
+
+    /// <summary>敵を探索する範囲の半径</summary>
+    [SerializeField, Header("敵を探索する範囲の半径")] private float _detectionRadius = 5f;
+
+    /// <summary>敵のレイヤーマスク</summary>
+    [SerializeField, Header("敵のレイヤーマスク")] private LayerMask _enemyLayer;
 
     public float ALT_ATTACK_Y_POS = 3f;
 
@@ -301,6 +307,8 @@ public class Player : MonoBehaviour
                 // 攻撃トリガーを有効化して、プレイヤーの状態を更新する
                 _animator.SetTrigger("Attack");
                 _currentState = PlayerState.Attack;
+
+                LookAtClosestEnemy();
             }  
         }
     }
@@ -376,6 +384,64 @@ public class Player : MonoBehaviour
         Vector3 playerPos = transform.position;
         var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
         EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, handIndex);
+    }
+
+    /// <summary>探索範囲内でプレイヤーから最も近い位置にいる敵を探索する</summary>
+    /// <returns>最も近い敵の位置</returns>
+    private Transform FindClosestEnemy()
+    {
+        // プレイヤーの位置を中心に、指定された半径内にいる全ての敵を取得する
+        Collider[] enemyColliders = Physics.OverlapSphere(transform.position, _detectionRadius, _enemyLayer);
+        Transform closestEnemy = null;
+        float closestDistanceSqr = Mathf.Infinity;
+
+        foreach (var enemy in enemyColliders)
+        {
+            // プレイヤーと敵の位置の差を計算し、距離の平方を求める
+            var distanceSqr = (enemy.transform.position - transform.position).sqrMagnitude;
+
+            // 現在の最短距離と比較して、より近い敵が見つかった場合、最短距離と最も近い敵を更新する
+            if (distanceSqr < closestDistanceSqr)
+            {
+                closestEnemy = enemy.transform;
+                closestDistanceSqr = distanceSqr;
+            }
+        }
+
+        // 最も近い敵が見つかった場合、その敵のTransformを返す。
+        if (closestEnemy != null)
+        {
+            return closestEnemy;
+        }
+        // 見つからなかった場合、ログを出力してnullを返す。
+        else
+        {
+            Debug.Log("No enemy found in detection range.");
+            return null;
+        }
+    }
+
+    /// <summary>最も近い敵がいる方向にプレイヤーを回転させる</summary>
+    private void LookAtClosestEnemy()
+    {
+        // 最も近い敵の位置を取得する
+        Transform closestEnemyPos = FindClosestEnemy();
+
+        // 最も近い敵が見つからなかった場合、ログを出力して処理を抜ける
+        if (closestEnemyPos == null)
+        {
+            Debug.Log("No enemy found to look at.");
+            return;
+        }
+
+        // プレイヤーと敵の位置の差を計算し、目標となる座標を求める
+        Vector3 targetPosition = FindClosestEnemy().position - transform.position;
+
+        // 目標となる座標までの回転量を求める
+        Quaternion targetRotation = Quaternion.LookRotation(targetPosition);
+
+        // プレイヤーを回転させる
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 100f);
     }
 
     //-------------------------------------------------------------------------------

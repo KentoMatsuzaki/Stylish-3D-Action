@@ -710,7 +710,7 @@ GameObject:
   - component: {fileID: 1048031745}
   - component: {fileID: 1048031744}
   - component: {fileID: 1048031743}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1265,6 +1265,10 @@ MonoBehaviour:
   _attackDuration: 0.1
   _attackEffectType: 0
   _floatEnergy: 1
+  _detectionRadius: 5
+  _enemyLayer:
+    serializedVersion: 2
+    m_Bits: 8
   ALT_ATTACK_Y_POS: 3
   _text: {fileID: 1856680558}
 --- !u!114 &1522206746
