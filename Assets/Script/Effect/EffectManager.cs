@@ -1,22 +1,25 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>各種エフェクトを管理するクラス</summary>
 public class EffectManager : Singleton<EffectManager>
 {
     /// <summary>斬撃エフェクトのリスト</summary>
-    [SerializeField, Header("斬撃エフェクト")] 
-        private List<GameObject> _slashEffectList = new List<GameObject>();
+    [SerializeField, Header("斬撃エフェクト")] private List<GameObject> _slashEffectList = new List<GameObject>();
 
     /// <summary>斬撃エフェクトの属性とインデックスのマップ</summary>
     private Dictionary<AttackEffectType, int> _slashEffectIndexMap;
 
     /// <summary>必殺技エフェクトのリスト</summary>
-    [SerializeField, Header("必殺技エフェクト")] 
-        private List<GameObject> _ultEffectList = new List<GameObject>();
+    [SerializeField, Header("必殺技エフェクト")] private List<GameObject> _ultEffectList = new List<GameObject>();
 
     /// <summary>必殺技エフェクトの情報とインデックスのマップ</summary>
     private Dictionary<AttackEffectType, int> _ultEffectIndexMap;
+
+    /// <summary>特殊攻撃エフェクトのリスト</summary>
+    [SerializeField, Header("特殊攻撃のエフェクト")] private List<GameObject> _altEffectList = new List<GameObject>();
+
+    private Dictionary<AttackEffectType, int> _altEffectIndexMap;
 
     /// <summary>斬撃エフェクトの回転量を示す定数。X軸方向の回転角度（0度）。</summary>
     private const float SLASH_EFFECT_X_ANGLE = 0f;
@@ -24,18 +27,20 @@ public class EffectManager : Singleton<EffectManager>
     /// <summary>斬撃エフェクトの回転量を示す定数。Y軸方向の回転角度（180度）。</summary>
     private const float SLASH_EFFECT_Y_ANGLE = 180f;
 
-    /// <summary>斬撃エフェクトの回転量を示す定数。右方向のZ軸回転角度（180度）。</summary>
+    /// <summary>右向き斬撃エフェクトの回転量を示す定数。Z軸方向の回転角度（180度）。</summary>
     private const float SLASH_EFFECT_Z_ANGLE_RIGHT = 180f;
 
-    /// <summary>斬撃エフェクトの回転量を示す定数。右斜め方向のZ軸回転角度（-135度）。</summary>
+    /// <summary>右斜め斬撃エフェクトの回転量を示す定数。Z軸方向の回転角度（-135度）。</summary>
     private const float SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL = -135f;
 
-    /// <summary>斬撃エフェクトの回転量を示す定数。左方向のZ軸回転角度（0度）。</summary>
+    /// <summary>左向き斬撃エフェクトの回転量を示す定数。Z軸方向の回転角度（0度）。</summary>
     private const float SLASH_EFFECT_Z_ANGLE_LEFT = 0f;
 
-    /// <summary>斬撃エフェクトの回転量を示す定数。左斜め方向のZ軸回転角度（-45度）。</summary>
+    /// <summary>左斜め斬撃エフェクトの回転量を示す定数。Z軸方向の回転角度（-45度）。</summary>
     private const float SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL = -45f;
 
+    /// <summary>特殊攻撃エフェクトを停止させるまでの遅延時間</summary>
+    private const float ALT_ATTACK_EFFECT_STOP_DELAY = 0f;
 
     protected override void Awake()
     {
@@ -60,12 +65,23 @@ public class EffectManager : Singleton<EffectManager>
             {AttackEffectType.Lightning, 1},
             {AttackEffectType.White, 2}
         };
+
+        // 特殊攻撃エフェクトのマップの初期化
+        _altEffectIndexMap = new Dictionary<AttackEffectType, int>
+        {
+            {AttackEffectType.Ink, 0},
+            {AttackEffectType.RedFlame, 1},
+            {AttackEffectType.BlueFlame, 2},
+            {AttackEffectType.Nebula, 3},
+            {AttackEffectType.Blood, 4},
+            {AttackEffectType.Water, 5}
+        };
     }
 
     /// <summary>斬撃エフェクトを生成・表示する</summary>
-    /// <param name="type">斬撃の属性</param>
-    /// <param name="pos">生成位置</param>
-    /// <param name="player">プレイヤーの位置</param>
+    /// <param name="type">エフェクトの属性</param>
+    /// <param name="pos">エフェクトの生成位置</param>
+    /// <param name="player">エフェクトの位置</param>
     /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手、2が両手）</param>
     public void PlaySlashEffect(AttackEffectType type, Vector3 pos, Transform player, int handIndex)
     {
@@ -122,9 +138,10 @@ public class EffectManager : Singleton<EffectManager>
     }
 
     /// <summary>必殺技エフェクトを生成・表示する</summary>
-    /// <param name="type">必殺技エフェクトの属性</param>
-    /// <param name="pos">必殺技エフェクトの生成位置</param>
-    public void DisplayUltEffect(AttackEffectType type, Vector3 pos, Transform player)
+    /// <param name="type">エフェクトの属性</param>
+    /// <param name="pos">エフェクトの生成位置</param>
+    /// <param name="player">プレイヤーの位置</param>
+    public void PlayUltEffect(AttackEffectType type, Vector3 pos, Transform player)
     {
         if (!_ultEffectIndexMap.TryGetValue((type), out int index))
         {
@@ -144,6 +161,49 @@ public class EffectManager : Singleton<EffectManager>
         else
         {
             Debug.LogWarning($"Effect type not found or Index is out of range.");
+        }
+    }
+
+    /// <summary>特殊攻撃エフェクトを生成・表示する</summary>
+    /// <param name="type">エフェクトの属性</param>
+    /// <param name="pos">エフェクトの生成位置</param>
+    /// <param name="player">プレイヤーの位置</param>
+    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手）</param>
+    public void PlayAltEffect(AttackEffectType type, Vector3 pos, Transform player, int handIndex)
+    {
+        // マップに存在しない場合は、インデックスを-1に設定する（0は既に割り当てられているため）
+        if (!_altEffectIndexMap.TryGetValue((type), out int index)) index = -1;
+
+        // indexの値が正常である場合
+        if (index >= 0 && index < _altEffectList.Count)
+        {
+            switch (handIndex)
+            {
+                // 右手
+                case 0:
+                    // 斜め右向きの特殊攻撃エフェクトを生成し、正しい方向に回転させる
+                    var diagonalRightEffect = Instantiate(_altEffectList[index], pos, Quaternion.identity, transform);
+                    diagonalRightEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+                    diagonalRightEffect.transform.Rotate(0, -180, SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL, Space.Self);
+
+                    // エフェクトのパーティクルを再生し、適切なタイミングで停止させる
+                    var particle = diagonalRightEffect.GetComponent<ParticleSystem>();
+                    particle.Play();
+                    
+                    break;
+
+                // 左手
+                case 1:
+                    // 斜め左向きの特殊攻撃エフェクトを生成し、正しい方向に回転させる
+                    var diagonalLeftEffect = Instantiate(_altEffectList[index], pos, Quaternion.identity, transform);
+                    diagonalLeftEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
+                    diagonalLeftEffect.transform.Rotate(0, -180, SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL, Space.Self);
+                    break;
+
+                default:
+                    Debug.LogError($"Unexpected handIndex value : {handIndex}");
+                    break;
+            }
         }
     }
 }

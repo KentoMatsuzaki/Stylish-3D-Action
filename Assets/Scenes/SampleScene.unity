@@ -1269,7 +1269,6 @@ MonoBehaviour:
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 8
-  ALT_ATTACK_Y_POS: 3
   _text: {fileID: 1856680558}
 --- !u!114 &1522206746
 MonoBehaviour:
@@ -1387,6 +1386,111 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1001 &1664403813
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 710635836445788633, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 710635836445788633, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1532301310639443992, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1532301310639443992, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2650282467343466453, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2650282467343466453, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4235492834679706928, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_Name
+      value: Blood_Alt
+      objectReference: {fileID: 0}
+    - target: {fileID: 4696596389602127345, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4696596389602127345, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7105349780862161528, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7105349780862161528, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125574763265172990, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479004431481320096, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479004431481320096, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
 --- !u!1 &1672407696
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,6 +1546,7 @@ MonoBehaviour:
   - {fileID: 2964910721390414536, guid: ebd2bf93b979a3941a3a9facbfe8d000, type: 3}
   - {fileID: 5981410016174638896, guid: ca2c59bb744507f4abf587aff85b6f8c, type: 3}
   - {fileID: 190325343542749142, guid: 1f4a2d7c7f4793b4b80c0a42c2a55ff5, type: 3}
+  _altEffectList: []
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,3 +1813,4 @@ SceneRoots:
   - {fileID: 918267658}
   - {fileID: 1522206733}
   - {fileID: 1048031747}
+  - {fileID: 1664403813}
