@@ -1,10 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.TinyCharacterController.Check;
-using Unity.TinyCharacterController.Control;
-using UnityEngine.UI;
 using Unity.TinyCharacterController.Brain;
 using Unity.TinyCharacterController.Effect;
+using Unity.TinyCharacterController.Control;
 
 /// <summary>プレイヤーの状態管理</summary>
 public class Player : MonoBehaviour
@@ -56,8 +56,6 @@ public class Player : MonoBehaviour
 
     /// <summary>敵のレイヤーマスク</summary>
     [SerializeField, Header("敵のレイヤーマスク")] private LayerMask _enemyLayer;
-
-    public float ALT_ATTACK_Y_POS = 3f;
 
     [SerializeField] Text _text;
 
@@ -310,6 +308,15 @@ public class Player : MonoBehaviour
 
                 LookAtClosestEnemy();
             }  
+
+            // 浮遊（特殊攻撃）状態の場合
+            else if(_currentState == PlayerState.Float)
+            {
+                // 特殊攻撃トリガーを有効化する
+                _animator.SetTrigger("Alt");
+
+
+            }
         }
     }
 
@@ -459,7 +466,7 @@ public class Player : MonoBehaviour
             if (CanTransitionToFloatState())
             {
                 // 浮遊させる
-                _jumpControl.JumpHeight = 3f;
+                _jumpControl.JumpHeight = 4f;
                 _jumpControl.Jump();
 
                 // アニメーションを再生して、プレイヤーの状態を更新する
@@ -503,6 +510,6 @@ public class Player : MonoBehaviour
     /// <summary>重力を弱める</summary>
     private void WeakenGravity()
     {
-        _gravity.GravityScale = 0.5f;
+        _gravity.GravityScale = 0.75f;
     }
 }
