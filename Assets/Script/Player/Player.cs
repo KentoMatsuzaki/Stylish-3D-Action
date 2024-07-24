@@ -443,6 +443,7 @@ public class Player : MonoBehaviour
 
         // プレイヤーと敵の位置の差を計算し、目標となる座標を求める
         Vector3 targetPosition = FindClosestEnemy().position - transform.position;
+        targetPosition.y = 0;
 
         // 目標となる座標までの回転量を求める
         Quaternion targetRotation = Quaternion.LookRotation(targetPosition);
@@ -478,6 +479,8 @@ public class Player : MonoBehaviour
             else if(_currentState == PlayerState.Float)
             {
                 _brain.SetFreezeAxis(false, false, false);
+                _gravity.enabled = true;
+                _gravity.GravityScale = 0.75f;
             }
         }
     }
@@ -498,7 +501,7 @@ public class Player : MonoBehaviour
     public void Float()
     {
         FreezeYAxis();
-        WeakenGravity();
+        DisableGravity();
     }
 
     /// <summary>プレイヤーのY座標を固定する</summary>
@@ -507,9 +510,9 @@ public class Player : MonoBehaviour
         _brain.SetFreezeAxis(false, true, false);
     }
 
-    /// <summary>重力を弱める</summary>
-    private void WeakenGravity()
+    /// <summary>重力を無効化する</summary>
+    private void DisableGravity()
     {
-        _gravity.GravityScale = 0.75f;
+        _gravity.enabled = false;
     }
 }
