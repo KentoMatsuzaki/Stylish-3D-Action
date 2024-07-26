@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerAttacker : MonoBehaviour, IAttacker
+public class SwordAttacker : MonoBehaviour, IAttacker
 {
     /// <summary>ƒvƒŒƒCƒ„[‚ÌUŒ‚—Í</summary>
     [SerializeField, Header("UŒ‚—Í")] private int _power;

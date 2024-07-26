@@ -37,10 +37,10 @@ public class Player : MonoBehaviour
     [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 7.5f;
 
     /// <summary>右手の攻撃クラス</summary>
-    [SerializeField, Header("右手の攻撃クラス")] private PlayerAttacker _rightSwordAttacker;
+    [SerializeField, Header("右手の攻撃クラス")] private SwordAttacker _rightSwordAttacker;
 
     /// <summary>左手の攻撃クラス</summary>
-    [SerializeField, Header("左手の攻撃クラス")] private PlayerAttacker _leftSwordAttacker;
+    [SerializeField, Header("左手の攻撃クラス")] private SwordAttacker _leftSwordAttacker;
 
     /// <summary>攻撃判定の持続時間</summary>
     [SerializeField, Header("攻撃判定の持続時間")] private float _attackDuration;

@@ -21,6 +21,7 @@ public class EffectManager : Singleton<EffectManager>
     /// <summary>特殊攻撃エフェクトのリスト</summary>
     [SerializeField, Header("特殊攻撃のエフェクト")] private List<GameObject> _altEffectList = new List<GameObject>();
 
+    /// <summary>特殊攻撃エフェクトの情報とインデックスのマップ</summary>
     private Dictionary<AttackEffectType, int> _altEffectIndexMap;
 
     /// <summary>斬撃エフェクトの回転量を示す定数。X軸方向の回転角度（0度）。</summary>
@@ -28,6 +29,9 @@ public class EffectManager : Singleton<EffectManager>
 
     /// <summary>斬撃エフェクトの回転量を示す定数。Y軸方向の回転角度（180度）。</summary>
     private const float SLASH_EFFECT_Y_ANGLE = 180f;
+
+    /// <summary>特殊攻撃エフェクトの回転量を示す定数。Y軸方向の回転角度（-180度）。</summary>
+    private const float ALT_EFFECT_Y_ANGLE = -180f;
 
     /// <summary>右向き斬撃エフェクトの回転量を示す定数。Z軸方向の回転角度（180度）。</summary>
     private const float SLASH_EFFECT_Z_ANGLE_RIGHT = 180f;
@@ -192,14 +196,12 @@ public class EffectManager : Singleton<EffectManager>
                     // 斜め右向きの特殊攻撃エフェクトを生成し、正しい方向に回転させる
                     var diagonalRightEffect = Instantiate(_altEffectList[index], pos, Quaternion.identity, transform);
                     diagonalRightEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
-                    diagonalRightEffect.transform.Rotate(0, -180, SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL_UPPER, Space.Self);
+                    diagonalRightEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, ALT_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL_UPPER, Space.Self);
 
                     // エフェクトのパーティクルを再生し、適切なタイミングで停止させる
                     var rightEffectParticle = diagonalRightEffect.GetComponent<ParticleSystem>();
-                    StartCoroutine(PlayAndStopAltEffect(rightEffectParticle));
+                    StartCoroutine(PlayAndStopAltEffectWithDelay(rightEffectParticle));
 
-                    // エフェクトを前方に移動させ続ける
-                    MoveForwardIndefinitely(diagonalRightEffect);
                     break;
 
                 // 左手
@@ -207,14 +209,12 @@ public class EffectManager : Singleton<EffectManager>
                     // 斜め左向きの特殊攻撃エフェクトを生成し、正しい方向に回転させる
                     var diagonalLeftEffect = Instantiate(_altEffectList[index], pos, Quaternion.identity, transform);
                     diagonalLeftEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
-                    diagonalLeftEffect.transform.Rotate(0, -180, SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL_UPPER, Space.Self);
+                    diagonalLeftEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, ALT_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL_UPPER, Space.Self);
 
                     // エフェクトのパーティクルを再生し、適切なタイミングで停止させる
                     var leftEffectParticle = diagonalLeftEffect.GetComponent<ParticleSystem>();
-                    StartCoroutine(PlayAndStopAltEffect(leftEffectParticle));
+                    StartCoroutine(PlayAndStopAltEffectWithDelay(leftEffectParticle));
 
-                    // エフェクトを前方に移動させ続ける
-                    MoveForwardIndefinitely(diagonalLeftEffect);
                     break;
 
                 default:
@@ -244,14 +244,12 @@ public class EffectManager : Singleton<EffectManager>
                     // 斜め右向きの特殊攻撃エフェクトを生成し、正しい方向に回転させる
                     var diagonalRightEffect = Instantiate(_altEffectList[index], pos, Quaternion.identity, transform);
                     diagonalRightEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
-                    diagonalRightEffect.transform.Rotate(0, -180, SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL_LOWER, Space.Self);
+                    diagonalRightEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, ALT_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_RIGHT_DIAGONAL_LOWER, Space.Self);
 
                     // エフェクトのパーティクルを再生し、適切なタイミングで停止させる
                     var rightEffectParticle = diagonalRightEffect.GetComponent<ParticleSystem>();
-                    StartCoroutine(PlayAndStopAltEffect(rightEffectParticle));
+                    StartCoroutine(PlayAndStopAltEffectWithDelay(rightEffectParticle));
 
-                    // エフェクトを前方に移動させ続ける
-                    MoveForwardIndefinitely(diagonalRightEffect);
                     break;
 
                 // 左手
@@ -259,14 +257,12 @@ public class EffectManager : Singleton<EffectManager>
                     // 斜め左向きの特殊攻撃エフェクトを生成し、正しい方向に回転させる
                     var diagonalLeftEffect = Instantiate(_altEffectList[index], pos, Quaternion.identity, transform);
                     diagonalLeftEffect.transform.rotation = Quaternion.LookRotation(player.transform.forward);
-                    diagonalLeftEffect.transform.Rotate(0, -180, SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL_LOWER, Space.Self);
+                    diagonalLeftEffect.transform.Rotate(SLASH_EFFECT_X_ANGLE, ALT_EFFECT_Y_ANGLE, SLASH_EFFECT_Z_ANGLE_LEFT_DIAGONAL_LOWER, Space.Self);
 
                     // エフェクトのパーティクルを再生し、適切なタイミングで停止させる
                     var leftEffectParticle = diagonalLeftEffect.GetComponent<ParticleSystem>();
-                    StartCoroutine(PlayAndStopAltEffect(leftEffectParticle));
-
-                    // エフェクトを前方に移動させ続ける
-                    MoveForwardIndefinitely(diagonalLeftEffect);
+                    StartCoroutine(PlayAndStopAltEffectWithDelay(leftEffectParticle));
+     
                     break;
 
                 default:
@@ -276,7 +272,8 @@ public class EffectManager : Singleton<EffectManager>
         }
     }
 
-    IEnumerator PlayAndStopAltEffect(ParticleSystem particle)
+    /// <summary>特殊攻撃エフェクトを再生し、一定時間後に停止させる</summary>
+    IEnumerator PlayAndStopAltEffectWithDelay(ParticleSystem particle)
     {
         // パーティクルシステムを再生
         particle.Play();
@@ -286,12 +283,5 @@ public class EffectManager : Singleton<EffectManager>
 
         // パーティクルシステムを停止
         particle.Pause();
-    }
-
-    private void MoveForwardIndefinitely(GameObject particle)
-    {
-        particle.transform.DOBlendableMoveBy(transform.forward * 10f, 1f)
-            .SetEase(Ease.Linear)
-            .OnComplete(() => MoveForwardIndefinitely(particle));
     }
 }
