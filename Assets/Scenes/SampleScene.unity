@@ -1546,7 +1546,13 @@ MonoBehaviour:
   - {fileID: 2964910721390414536, guid: ebd2bf93b979a3941a3a9facbfe8d000, type: 3}
   - {fileID: 5981410016174638896, guid: ca2c59bb744507f4abf587aff85b6f8c, type: 3}
   - {fileID: 190325343542749142, guid: 1f4a2d7c7f4793b4b80c0a42c2a55ff5, type: 3}
-  _altEffectList: []
+  _altEffectList:
+  - {fileID: 2445758773746371492, guid: f348aeb975ec4c84582675f79985335f, type: 3}
+  - {fileID: 4421458402118248255, guid: 11350a50165b96144a3c5b13021909ce, type: 3}
+  - {fileID: 6505300597301722737, guid: 37a9233b80dadb146befae5ddc64dfa3, type: 3}
+  - {fileID: 7489176645323221291, guid: 8d3f327238a4a994b9a2ea440f901bf0, type: 3}
+  - {fileID: 4235492834679706928, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+  - {fileID: 3432907777765461413, guid: c13ba4a2de7701846aa7dface2fad038, type: 3}
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0

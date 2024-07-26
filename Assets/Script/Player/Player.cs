@@ -314,8 +314,6 @@ public class Player : MonoBehaviour
             {
                 // 特殊攻撃トリガーを有効化する
                 _animator.SetTrigger("Alt");
-
-
             }
         }
     }
@@ -391,6 +389,28 @@ public class Player : MonoBehaviour
         Vector3 playerPos = transform.position;
         var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
         EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, handIndex);
+    }
+
+    /// <summary>斬撃エフェクト（下方）を生成・表示する</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手）</param>
+    public void PlayLowerAltEffect(int handIndex)
+    {
+        // プレイヤーの座標を元に、正しい位置にエフェクトを生成する
+        Vector3 playerPos = transform.position;
+        var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
+        EffectManager.Instance.PlayLowerAltEffect(_attackEffectType, effectPos, transform, handIndex);
+    }
+
+    /// <summary>斬撃エフェクト（上方）を生成・表示する</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手）</param>
+    public void PlayUpperAltEffect(int handIndex)
+    {
+        // プレイヤーの座標を元に、正しい位置にエフェクトを生成する
+        Vector3 playerPos = transform.position;
+        var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
+        EffectManager.Instance.PlayUpperAltEffect(_attackEffectType, effectPos, transform, handIndex);
     }
 
     /// <summary>探索範囲内でプレイヤーから最も近い位置にいる敵を探索する</summary>
