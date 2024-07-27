@@ -516,6 +516,15 @@ public class Player : MonoBehaviour
                 _brain.SetFreezeAxis(false, false, false);
                 _gravity.enabled = true;
                 _gravity.GravityScale = 0.75f;
+
+                // Œ»İ‚Ì‰ñ“]‚ğæ“¾
+                Quaternion currentRotation = transform.rotation;
+
+                // Y²‚Ì‰ñ“]‚ğˆÛ‚µAX²‚ÆZ²‚Ì‰ñ“]‚ğ0‚Éİ’è
+                Quaternion fixedRotation = Quaternion.Euler(0, currentRotation.eulerAngles.y, 0);
+
+                // C³Ï‚İ‚Ì‰ñ“]‚ğ“K—p
+                transform.rotation = fixedRotation;
             }
         }
     }
