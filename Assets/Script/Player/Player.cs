@@ -306,7 +306,7 @@ public class Player : MonoBehaviour
                 _animator.SetTrigger("Attack");
                 _currentState = PlayerState.Attack;
 
-                LookAtClosestEnemy();
+                LookAtClosestEnemy(true);
             }  
 
             // 浮遊（特殊攻撃）状態の場合
@@ -314,6 +314,8 @@ public class Player : MonoBehaviour
             {
                 // 特殊攻撃トリガーを有効化する
                 _animator.SetTrigger("Alt");
+
+                LookAtClosestEnemy(false);
             }
         }
     }
@@ -449,7 +451,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>最も近い敵がいる方向にプレイヤーを回転させる</summary>
-    private void LookAtClosestEnemy()
+    private void LookAtClosestEnemy(bool isNormalAttack)
     {
         // 最も近い敵の位置を取得する
         Transform closestEnemyPos = FindClosestEnemy();
@@ -462,14 +464,27 @@ public class Player : MonoBehaviour
         }
 
         // プレイヤーと敵の位置の差を計算し、目標となる座標を求める
-        Vector3 targetPosition = FindClosestEnemy().position - transform.position;
-        targetPosition.y = 0;
+        Vector3 targetPosition = closestEnemyPos.position - transform.position;
 
-        // 目標となる座標までの回転量を求める
-        Quaternion targetRotation = Quaternion.LookRotation(targetPosition);
+        if (isNormalAttack)
+        {
+            // 通常攻撃の場合はY軸の回転量を無視する
+            targetPosition.y = 0;
 
-        // プレイヤーを回転させる
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 100f);
+            // 目標となる座標までの回転量を求める
+            Quaternion targetRotation = Quaternion.LookRotation(targetPosition);
+
+            // プレイヤーを回転させる
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 100f);
+        }
+        else
+        { 
+            // 目標となる座標までの回転量を求める
+            Quaternion targetRotation = Quaternion.LookRotation(targetPosition);
+
+            // プレイヤーを回転させる
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1f);
+        }  
     }
 
     //-------------------------------------------------------------------------------
