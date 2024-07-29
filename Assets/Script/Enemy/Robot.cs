@@ -1,3 +1,5 @@
+using DG.Tweening;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>空陸両用ロボット</summary>
@@ -7,20 +9,24 @@ public class Robot : MonoBehaviour
     Animator _animator;
 
     /// <summary>ロボットの現在の状態</summary>
-    RobotState _currentState;
+    RobotState _currentState = RobotState.Initialize;
 
     CharacterController _controller;
 
     Vector3? _destination;
-    float _patrolRange = 5f;
+    float _patrolRange = 2.5f;
     float _moveSpeed = 1f;
     float _arrivalThreshold = 0.5f;
 
     float timer = 0f;
+    bool _isRotating = false;
 
     /// <summary>ロボットの状態を表す列挙型</summary>
     private enum RobotState
     {
+        /// <summary>生成時の状態</summary>
+        Initialize,
+
         /// <summary>巡回状態</summary>
         Patrol,
 
@@ -45,9 +51,14 @@ public class Robot : MonoBehaviour
 
     private void Update()
     {
-        Patrol();
+        if(_currentState == RobotState.Patrol)
+        {
+            Patrol();
+        }
+
         timer += Time.deltaTime;
-        if (timer > 1f)
+
+        if (timer > 1f && _destination.HasValue)
         {
             Debug.Log(_destination.Value.ToString());
             Debug.Log(Vector3.Distance(transform.position, _destination.Value));
@@ -70,20 +81,28 @@ public class Robot : MonoBehaviour
             }
             else
             {
-                _controller.Move(transform.forward * _moveSpeed * Time.deltaTime);
-                return NodeStatus.Running;
+                if (!_isRotating)
+                {
+                    MoveForward();
+                }   
             }
         }
         else
         {
             SetRandomDestination();
-            return NodeStatus.Running;
+            StartCoroutine(RotateTowardsDestination());
         }
+        return NodeStatus.Running;
     }
 
     //-------------------------------------------------------------------------------
     // 巡回に関する処理
     //-------------------------------------------------------------------------------
+    
+    public void SetRobotStatePatrol()
+    {
+        _currentState = RobotState.Patrol;
+    }
 
     /// <summary>巡回の目標地点に到達しているかどうか</summary>
     private bool IsArrivedAtDestination()
@@ -106,5 +125,31 @@ public class Robot : MonoBehaviour
 
         // 目的地をランダムな地点に設定する
         _destination = randomPos;
+    }
+
+    /// <summary>前方に移動させる</summary>
+    private void MoveForward()
+    {
+        _controller.Move(transform.forward * _moveSpeed * Time.deltaTime);
+    }
+
+    IEnumerator RotateTowardsDestination()
+    {
+        if (_destination.HasValue)
+        {
+            var dir = (transform.position - _destination.Value).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(dir);
+            _isRotating = true;
+
+            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 5f);
+            yield return rotationTween.WaitForCompletion();
+
+            _isRotating = false;
+        }
+        else
+        {
+            Debug.LogError("Destination not Set.");
+            yield break;
+        }
     }
 }
