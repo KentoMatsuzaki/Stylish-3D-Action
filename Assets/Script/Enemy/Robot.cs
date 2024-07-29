@@ -63,17 +63,13 @@ public class Robot : MonoBehaviour
     {
         if (_destination.HasValue)
         {
-            if (IsArrived())
+            if (IsArrivedAtDestination())
             {
                 _destination = null;
                 return NodeStatus.Success;
             }
             else
             {
-                Vector3 direction = (_destination.Value - transform.position).normalized;
-                Quaternion lookRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-
                 _controller.Move(transform.forward * _moveSpeed * Time.deltaTime);
                 return NodeStatus.Running;
             }
@@ -89,32 +85,26 @@ public class Robot : MonoBehaviour
     // 巡回に関する処理
     //-------------------------------------------------------------------------------
 
-    private bool IsArrived()
+    /// <summary>巡回の目標地点に到達しているかどうか</summary>
+    private bool IsArrivedAtDestination()
     {
         return Vector3.Distance(transform.position, _destination.Value) 
             < _arrivalThreshold ? true : false;
     }
 
+    /// <summary>ランダムな巡回の目標地点を設定する</summary>
     private void SetRandomDestination()
     {
         // 巡回範囲を半径とする球内の、ランダムな地点を取得する
         Vector3 randomPos = Random.insideUnitSphere * _patrolRange;
 
+        // ランダムな地点のY座標を0に設定する
         randomPos.y = 0;
 
-        //Quaternion rotation = Quaternion.LookRotation(randomPos);
-
-        //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5f);
-
-        
-
-        // 球は原点を中心としているため、敵の位置を加える
+        // ランダムな地点は原点を中心としているため、キャラクターの位置を加算する
         randomPos += transform.position;
 
-        // 
+        // 目的地をランダムな地点に設定する
         _destination = randomPos;
-
-        
-
     }
 }
