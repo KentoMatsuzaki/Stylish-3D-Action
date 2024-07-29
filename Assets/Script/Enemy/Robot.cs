@@ -14,7 +14,7 @@ public class Robot : MonoBehaviour
     CharacterController _controller;
 
     Vector3? _destination;
-    float _patrolRange = 2.5f;
+    float _patrolRange = 5f;
     float _moveSpeed = 1f;
     float _arrivalThreshold = 0.5f;
 
@@ -137,11 +137,11 @@ public class Robot : MonoBehaviour
     {
         if (_destination.HasValue)
         {
-            var dir = (transform.position - _destination.Value).normalized;
+            var dir = (_destination.Value - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(dir);
             _isRotating = true;
 
-            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 5f);
+            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 1f);
             yield return rotationTween.WaitForCompletion();
 
             _isRotating = false;
