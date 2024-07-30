@@ -83,6 +83,9 @@ public class Robot : MonoBehaviour
                 // 目標地点の方向へ回転中である場合
                 if (!_isRotating)
                 {
+                    // 衝突判定をチェックし、目標地点をリセットする
+                    CheckCollisionAndResetDestination();
+
                     // 前方へ移動させる
                     MoveForward();
                 }   
@@ -149,11 +152,6 @@ public class Robot : MonoBehaviour
     /// <summary>前方に移動させる</summary>
     private void MoveForward()
     { 
-        if (IsCollided())
-        {
-            _patrolDestination = null;
-            SetRandomDestination();
-        }
         _controller.Move(transform.forward * _patrolSpeed * Time.deltaTime);
     }
 
@@ -204,6 +202,18 @@ public class Robot : MonoBehaviour
             }
         }
         return false;
+    }
+
+    /// <summary>衝突判定をチェックし、目標地点をリセットする</summary>
+    private void CheckCollisionAndResetDestination()
+    {
+        // 衝突が発生している場合
+        if (IsCollided())
+        {
+            // 目標地点をクリアし、新しい地点を設定する
+            _patrolDestination = null;
+            SetRandomDestination();
+        }
     }
 
     private void OnDrawGizmos()
