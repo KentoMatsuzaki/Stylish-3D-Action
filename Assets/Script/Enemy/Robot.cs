@@ -30,7 +30,7 @@ public class Robot : MonoBehaviour
     private const float MIN_ANGLE = 45f;
 
     /// <summary>レイキャストを飛ばす位置のY座標のオフセット</summary>
-    private const float RAYCAST_Y_OFFSET = 0.5f;
+    private const float RAYCAST_Y_OFFSET = 0.75f;
 
     /// <summary>レイキャストを飛ばす距離</summary>
     private const float RAYCAST_DISTANCE = 1.5f;
@@ -232,9 +232,19 @@ public class Robot : MonoBehaviour
         }
     }
 
+    /// <summary>レイキャストを可視化させる</summary>
     private void OnDrawGizmos()
     {
+        // ギズモの色を設定する
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(new Vector3(transform.position.x, 0.5f, transform.position.z), transform.forward * 1.5f);
+
+        // 現在のキャラクターの位置を取得する
+        Vector3 currentPos = transform.position;
+
+        // レイキャストを飛ばす位置を設定する
+        Vector3 raycastPos = new Vector3(currentPos.x, RAYCAST_Y_OFFSET, currentPos.z);
+
+        // レイキャストを表示する
+        Gizmos.DrawRay(raycastPos, transform.forward * RAYCAST_DISTANCE);
     }
 }
