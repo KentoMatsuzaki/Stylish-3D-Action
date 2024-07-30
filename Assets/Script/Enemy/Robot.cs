@@ -29,6 +29,12 @@ public class Robot : MonoBehaviour
     /// <summary>目標地点を新たに設定する際の最小回転角度</summary>
     private const float MIN_ANGLE = 45f;
 
+    /// <summary>レイキャストを飛ばす位置のY座標のオフセット</summary>
+    private const float RAYCAST_Y_OFFSET = 0.5f;
+
+    /// <summary>レイキャストを飛ばす距離</summary>
+    private const float RAYCAST_DISTANCE = 1.5f;
+
     /// <summary>巡回する目標地点の方向へ回転中であることを示すフラグ</summary>
     private bool _isRotating = false;
 
@@ -84,7 +90,7 @@ public class Robot : MonoBehaviour
                 if (!_isRotating)
                 {
                     // 衝突判定をチェックし、目標地点をクリアする
-                    CheckCollisionAndClearDestination();
+                    CheckCollisionThenClearDestination();
 
                     // 前方へ移動させる
                     MoveForward();
@@ -171,7 +177,7 @@ public class Robot : MonoBehaviour
             _isRotating = true;
 
             // 目標地点の方向へ回転させる
-            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 1.5f);
+            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, ROTATION_DURATION);
 
             // 回転の完了を待機する
             yield return rotationTween.WaitForCompletion();
@@ -199,10 +205,10 @@ public class Robot : MonoBehaviour
         Vector3 currentPos = transform.position;
 
         // レイキャストを飛ばす位置を設定
-        Vector3 raycastPos = new Vector3(currentPos.x, 0.5f, currentPos.z);
+        Vector3 raycastPos = new Vector3(currentPos.x, RAYCAST_Y_OFFSET, currentPos.z);
 
         // レイキャストを前方に飛ばし、衝突が発生した場合はtrueを返す
-        if (Physics.Raycast(raycastPos, transform.forward, out hit, 1.5f))
+        if (Physics.Raycast(raycastPos, transform.forward, out hit, RAYCAST_DISTANCE))
         {
             // 接触したオブジェクトが存在する場合
             if (hit.collider)
@@ -216,7 +222,7 @@ public class Robot : MonoBehaviour
     }
 
     /// <summary>衝突判定をチェックし、目標地点をクリアする</summary>
-    private void CheckCollisionAndClearDestination()
+    private void CheckCollisionThenClearDestination()
     {
         // 衝突が発生している場合
         if (IsCollided())
