@@ -83,8 +83,8 @@ public class Robot : MonoBehaviour
                 // 目標地点の方向へ回転中である場合
                 if (!_isRotating)
                 {
-                    // 衝突判定をチェックし、目標地点をリセットする
-                    CheckCollisionAndResetDestination();
+                    // 衝突判定をチェックし、目標地点をクリアする
+                    CheckCollisionAndClearDestination();
 
                     // 前方へ移動させる
                     MoveForward();
@@ -204,15 +204,14 @@ public class Robot : MonoBehaviour
         return false;
     }
 
-    /// <summary>衝突判定をチェックし、目標地点をリセットする</summary>
-    private void CheckCollisionAndResetDestination()
+    /// <summary>衝突判定をチェックし、目標地点をクリアする</summary>
+    private void CheckCollisionAndClearDestination()
     {
         // 衝突が発生している場合
         if (IsCollided())
         {
-            // 目標地点をクリアし、新しい地点を設定する
+            // 目標地点をクリアする
             _patrolDestination = null;
-            SetRandomDestination();
         }
     }
 
