@@ -148,7 +148,12 @@ public class Robot : MonoBehaviour
 
     /// <summary>前方に移動させる</summary>
     private void MoveForward()
-    {
+    { 
+        if (IsCollided())
+        {
+            _patrolDestination = null;
+            SetRandomDestination();
+        }
         _controller.Move(transform.forward * _patrolSpeed * Time.deltaTime);
     }
 
@@ -183,5 +188,27 @@ public class Robot : MonoBehaviour
             Debug.LogError("Destination not Set.");
             yield break;
         }
+    }
+
+    private bool IsCollided()
+    {
+        RaycastHit hit;
+
+        Vector3 currentPos = transform.position;
+        Vector3 raycastPos = new Vector3(currentPos.x, 0.5f, currentPos.z);
+        if(Physics.Raycast(raycastPos, transform.forward, out hit, 1.5f))
+        {
+            if(hit.collider)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(new Vector3(transform.position.x, 0.5f, transform.position.z), transform.forward * 1.5f);
     }
 }
