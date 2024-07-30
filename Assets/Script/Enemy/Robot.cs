@@ -1,6 +1,6 @@
+using UnityEngine;
 using DG.Tweening;
 using System.Collections;
-using UnityEngine;
 
 /// <summary>空陸両用ロボット</summary>
 public class Robot : MonoBehaviour
@@ -8,15 +8,23 @@ public class Robot : MonoBehaviour
     /// <summary>アニメーター</summary>
     Animator _animator;
 
+    /// <summary>キャラクターコントローラー</summary>
     CharacterController _controller;
 
-    Vector3? _destination;
-    float _patrolRange = 5f;
-    float _moveSpeed = 1f;
-    float _arrivalThreshold = 0.5f;
+    /// <summary>巡回する目標地点</summary>
+    Vector3? _patrolDestination;
 
-    float timer = 0f;
-    bool _isRotating = false;
+    /// <summary>巡回する目標地点を求める際の球の半径</summary>
+    [SerializeField, Header("巡回する範囲の半径")]  private float _patrolRadius = 5f;
+
+    /// <summary>巡回する際の移動速度</summary>
+    [SerializeField, Header("巡回時の移動速度")] private float _patrolSpeed = 1f;
+
+    /// <summary>巡回する目標地点に到達したかどうかを判定する閾値</summary>
+    private const float ARRIVAL_THRESHOLD = 0.5f;
+
+    /// <summary>巡回する目標地点の向きへ回転中であることを示すフラグ</summary>
+    private bool _isRotating = false;
 
     private void Start()
     {
@@ -27,27 +35,21 @@ public class Robot : MonoBehaviour
     private void Update()
     {
         Patrol();
-        timer += Time.deltaTime;
-
-        if (timer > 1f && _destination.HasValue)
-        {
-            Debug.Log(_destination.Value.ToString());
-            Debug.Log(Vector3.Distance(transform.position, _destination.Value));
-            timer = 0f;
-        }
     }
 
     //-------------------------------------------------------------------------------
     // 巡回
     //-------------------------------------------------------------------------------
 
+    /// <summary>目標地点を巡回させる</summary>
+    /// <returns>巡回アクションノードの評価結果</returns>
     public NodeStatus Patrol()
     {
-        if (_destination.HasValue)
+        if (_patrolDestination.HasValue)
         {
             if (IsArrivedAtDestination())
             {
-                _destination = null;
+                _patrolDestination = null;
                 return NodeStatus.Success;
             }
             else
@@ -73,15 +75,15 @@ public class Robot : MonoBehaviour
     /// <summary>巡回の目標地点に到達しているかどうか</summary>
     private bool IsArrivedAtDestination()
     {
-        return Vector3.Distance(transform.position, _destination.Value) 
-            < _arrivalThreshold ? true : false;
+        return Vector3.Distance(transform.position, _patrolDestination.Value) 
+            < ARRIVAL_THRESHOLD ? true : false;
     }
 
     /// <summary>ランダムな巡回の目標地点を設定する</summary>
     private void SetRandomDestination()
     {
         // 巡回範囲を半径とする球内の、ランダムな地点を取得する
-        Vector3 randomPos = Random.insideUnitSphere * _patrolRange;
+        Vector3 randomPos = Random.insideUnitSphere * _patrolRadius;
 
         // ランダムな地点のY座標を0に設定する
         randomPos.y = 0;
@@ -90,20 +92,20 @@ public class Robot : MonoBehaviour
         randomPos += transform.position;
 
         // 目的地をランダムな地点に設定する
-        _destination = randomPos;
+        _patrolDestination = randomPos;
     }
 
     /// <summary>前方に移動させる</summary>
     private void MoveForward()
     {
-        _controller.Move(transform.forward * _moveSpeed * Time.deltaTime);
+        _controller.Move(transform.forward * _patrolSpeed * Time.deltaTime);
     }
 
     IEnumerator RotateTowardsDestination()
     {
-        if (_destination.HasValue)
+        if (_patrolDestination.HasValue)
         {
-            var dir = (_destination.Value - transform.position).normalized;
+            var dir = (_patrolDestination.Value - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(dir);
             _isRotating = true;
 
