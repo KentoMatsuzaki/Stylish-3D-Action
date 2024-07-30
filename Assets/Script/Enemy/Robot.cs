@@ -23,7 +23,7 @@ public class Robot : MonoBehaviour
     /// <summary>巡回する目標地点に到達したかどうかを判定する閾値</summary>
     private const float ARRIVAL_THRESHOLD = 0.5f;
 
-    /// <summary>巡回する目標地点の向きへ回転中であることを示すフラグ</summary>
+    /// <summary>巡回する目標地点の方向へ回転中であることを示すフラグ</summary>
     private bool _isRotating = false;
 
     private void Start()
@@ -45,26 +45,38 @@ public class Robot : MonoBehaviour
     /// <returns>巡回アクションノードの評価結果</returns>
     public NodeStatus Patrol()
     {
+        // 目標地点が存在する場合
         if (_patrolDestination.HasValue)
         {
+            // 目標地点に到達した場合
             if (IsArrivedAtDestination())
             {
+                // 目標地点をクリアして、成功の評価結果を返す
                 _patrolDestination = null;
                 return NodeStatus.Success;
             }
+            // 目標地点に到達していない場合
             else
             {
+                // 目標地点の方向へ回転中である場合
                 if (!_isRotating)
                 {
+                    // 前方へ移動させる
                     MoveForward();
                 }   
             }
         }
+        // 目標地点が存在しない場合
         else
         {
+            // ランダムな目標地点を設定する
             SetRandomDestination();
+
+            // 目標地点の方向へ回転させる
             StartCoroutine(RotateTowardsDestination());
         }
+
+        // 実行中の評価結果を返す
         return NodeStatus.Running;
     }
 
