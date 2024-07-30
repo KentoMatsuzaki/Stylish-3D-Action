@@ -23,6 +23,9 @@ public class Robot : MonoBehaviour
     /// <summary>巡回する目標地点に到達したかどうかを判定する閾値</summary>
     private const float ARRIVAL_THRESHOLD = 0.5f;
 
+    /// <summary></summary>
+    private const float ROTATION_DURATION = 1.5f;
+
     /// <summary>巡回する目標地点の方向へ回転中であることを示すフラグ</summary>
     private bool _isRotating = false;
 
@@ -49,7 +52,7 @@ public class Robot : MonoBehaviour
         if (_patrolDestination.HasValue)
         {
             // 目標地点に到達した場合
-            if (IsArrivedAtDestination())
+            if (IsArrivedAtPatrolDestination())
             {
                 // 目標地点をクリアして、成功の評価結果を返す
                 _patrolDestination = null;
@@ -84,14 +87,14 @@ public class Robot : MonoBehaviour
     // 巡回に関する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>巡回の目標地点に到達しているかどうか</summary>
-    private bool IsArrivedAtDestination()
+    /// <summary>巡回する目標地点に到達しているかどうか</summary>
+    private bool IsArrivedAtPatrolDestination()
     {
         return Vector3.Distance(transform.position, _patrolDestination.Value) 
             < ARRIVAL_THRESHOLD ? true : false;
     }
 
-    /// <summary>ランダムな巡回の目標地点を設定する</summary>
+    /// <summary>巡回する目標地点をランダムに設定する</summary>
     private void SetRandomDestination()
     {
         // 巡回範囲を半径とする球内の、ランダムな地点を取得する
@@ -113,21 +116,34 @@ public class Robot : MonoBehaviour
         _controller.Move(transform.forward * _patrolSpeed * Time.deltaTime);
     }
 
+    /// <summary>目標地点の方向へ回転させるコルーチン</summary>
     IEnumerator RotateTowardsDestination()
     {
+        // 目標地点が存在する場合
         if (_patrolDestination.HasValue)
         {
+            // 目標地点へのベクトルを求める
             var dir = (_patrolDestination.Value - transform.position).normalized;
+
+            // ベクトルを基に、目標地点への回転方向を求める
             Quaternion lookRotation = Quaternion.LookRotation(dir);
+
+            // 目標地点へ回転中であることを示すフラグをオンにする
             _isRotating = true;
 
+            // 目標地点の方向へ回転させる
             Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 1.5f);
+
+            // 回転の完了を待機する
             yield return rotationTween.WaitForCompletion();
 
+            // 目標地点へ回転中であることを示すフラグをオフにする
             _isRotating = false;
         }
+        // 目標地点が存在しない場合
         else
         {
+            // エラーログを出力して処理を抜ける
             Debug.LogError("Destination not Set.");
             yield break;
         }
