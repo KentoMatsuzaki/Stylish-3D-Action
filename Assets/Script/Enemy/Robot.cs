@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
 using System.Collections;
-using UnityEngine.TextCore.Text;
 
 /// <summary>空陸両用ロボット</summary>
 public class Robot : MonoBehaviour
@@ -33,6 +32,9 @@ public class Robot : MonoBehaviour
     /// <summary>巡回する目標地点の方向へ回転中であることを示すフラグ</summary>
     private bool _isRotating = false;
 
+    /// <summary>初期化アニメーションが完了したことを示すフラグ</summary>
+    private bool _isInitialized = false;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -41,7 +43,20 @@ public class Robot : MonoBehaviour
 
     private void Update()
     {
+        // 初期化アニメーションの再生が終了していない場合は、処理を抜ける
+        if (!_isInitialized) return;
+
         Patrol();
+    }
+
+    //-------------------------------------------------------------------------------
+    // BehaviorTreeに関連しない処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>初期化アニメーションが完了したことを示すフラグをオンにする</summary>
+    public void SetIsInitializedTrue()
+    {
+        _isInitialized = true;
     }
 
     //-------------------------------------------------------------------------------
