@@ -8,9 +8,6 @@ public class Robot : MonoBehaviour
     /// <summary>アニメーター</summary>
     Animator _animator;
 
-    /// <summary>ロボットの現在の状態</summary>
-    RobotState _currentState = RobotState.Initialize;
-
     CharacterController _controller;
 
     Vector3? _destination;
@@ -21,28 +18,6 @@ public class Robot : MonoBehaviour
     float timer = 0f;
     bool _isRotating = false;
 
-    /// <summary>ロボットの状態を表す列挙型</summary>
-    private enum RobotState
-    {
-        /// <summary>生成時の状態</summary>
-        Initialize,
-
-        /// <summary>巡回状態</summary>
-        Patrol,
-
-        /// <summary>追跡状態</summary>
-        Chase,
-
-        /// <summary>攻撃状態</summary>
-        Attack,
-
-        /// <summary>被ダメージ状態</summary>
-        Damage,
-
-        /// <summary>死亡状態</summary>
-        Dead
-    }
-
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -51,11 +26,7 @@ public class Robot : MonoBehaviour
 
     private void Update()
     {
-        if(_currentState == RobotState.Patrol)
-        {
-            Patrol();
-        }
-
+        Patrol();
         timer += Time.deltaTime;
 
         if (timer > 1f && _destination.HasValue)
@@ -98,11 +69,6 @@ public class Robot : MonoBehaviour
     //-------------------------------------------------------------------------------
     // 巡回に関する処理
     //-------------------------------------------------------------------------------
-    
-    public void SetRobotStatePatrol()
-    {
-        _currentState = RobotState.Patrol;
-    }
 
     /// <summary>巡回の目標地点に到達しているかどうか</summary>
     private bool IsArrivedAtDestination()
@@ -141,7 +107,7 @@ public class Robot : MonoBehaviour
             Quaternion lookRotation = Quaternion.LookRotation(dir);
             _isRotating = true;
 
-            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 1f);
+            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 1.5f);
             yield return rotationTween.WaitForCompletion();
 
             _isRotating = false;
