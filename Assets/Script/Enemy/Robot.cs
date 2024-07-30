@@ -1,32 +1,36 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using DG.Tweening;
 using System.Collections;
+using UnityEngine.TextCore.Text;
 
-/// <summary>‹ó—¤—¼—pƒƒ{ƒbƒg</summary>
+/// <summary>ç©ºé™¸ä¸¡ç”¨ãƒ­ãƒœãƒƒãƒˆ</summary>
 public class Robot : MonoBehaviour
 {
-    /// <summary>ƒAƒjƒ[ƒ^[</summary>
+    /// <summary>ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼</summary>
     Animator _animator;
 
-    /// <summary>ƒLƒƒƒ‰ƒNƒ^[ƒRƒ“ƒgƒ[ƒ‰[</summary>
+    /// <summary>ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼</summary>
     CharacterController _controller;
 
-    /// <summary>„‰ñ‚·‚é–Ú•W’n“_</summary>
+    /// <summary>å·¡å›ã™ã‚‹ç›®æ¨™åœ°ç‚¹</summary>
     Vector3? _patrolDestination;
 
-    /// <summary>„‰ñ‚·‚é–Ú•W’n“_‚ğ‹‚ß‚éÛ‚Ì‹…‚Ì”¼Œa</summary>
-    [SerializeField, Header("„‰ñ‚·‚é”ÍˆÍ‚Ì”¼Œa")]  private float _patrolRadius = 5f;
+    /// <summary>å·¡å›ã™ã‚‹ç›®æ¨™åœ°ç‚¹ã‚’æ±‚ã‚ã‚‹éš›ã®çƒã®åŠå¾„</summary>
+    [SerializeField, Header("å·¡å›ã™ã‚‹ç¯„å›²ã®åŠå¾„")]  private float _patrolRadius = 5f;
 
-    /// <summary>„‰ñ‚·‚éÛ‚ÌˆÚ“®‘¬“x</summary>
-    [SerializeField, Header("„‰ñ‚ÌˆÚ“®‘¬“x")] private float _patrolSpeed = 1f;
+    /// <summary>å·¡å›ã™ã‚‹éš›ã®ç§»å‹•é€Ÿåº¦</summary>
+    [SerializeField, Header("å·¡å›æ™‚ã®ç§»å‹•é€Ÿåº¦")] private float _patrolSpeed = 1f;
 
-    /// <summary>„‰ñ‚·‚é–Ú•W’n“_‚É“’B‚µ‚½‚©‚Ç‚¤‚©‚ğ”»’è‚·‚éè‡’l</summary>
+    /// <summary>å·¡å›ã™ã‚‹ç›®æ¨™åœ°ç‚¹ã«åˆ°é”ã—ãŸã‹ã©ã†ã‹ã‚’åˆ¤å®šã™ã‚‹é–¾å€¤</summary>
     private const float ARRIVAL_THRESHOLD = 0.5f;
 
-    /// <summary></summary>
+    /// <summary>å·¡å›ã™ã‚‹ç›®æ¨™åœ°ç‚¹ã®æ–¹å‘ã¸ã®å›è»¢ã«è¦ã™ã‚‹æ™‚é–“</summary>
     private const float ROTATION_DURATION = 1.5f;
 
-    /// <summary>„‰ñ‚·‚é–Ú•W’n“_‚Ì•ûŒü‚Ö‰ñ“]’†‚Å‚ ‚é‚±‚Æ‚ğ¦‚·ƒtƒ‰ƒO</summary>
+    /// <summary>ç›®æ¨™åœ°ç‚¹ã‚’æ–°ãŸã«è¨­å®šã™ã‚‹éš›ã®æœ€å°å›è»¢è§’åº¦</summary>
+    private const float MIN_ANGLE = 45f;
+
+    /// <summary>å·¡å›ã™ã‚‹ç›®æ¨™åœ°ç‚¹ã®æ–¹å‘ã¸å›è»¢ä¸­ã§ã‚ã‚‹ã“ã¨ã‚’ç¤ºã™ãƒ•ãƒ©ã‚°</summary>
     private bool _isRotating = false;
 
     private void Start()
@@ -41,109 +45,126 @@ public class Robot : MonoBehaviour
     }
 
     //-------------------------------------------------------------------------------
-    // „‰ñ
+    // å·¡å›
     //-------------------------------------------------------------------------------
 
-    /// <summary>–Ú•W’n“_‚ğ„‰ñ‚³‚¹‚é</summary>
-    /// <returns>„‰ñƒAƒNƒVƒ‡ƒ“ƒm[ƒh‚Ì•]‰¿Œ‹‰Ê</returns>
+    /// <summary>ç›®æ¨™åœ°ç‚¹ã‚’å·¡å›ã•ã›ã‚‹</summary>
+    /// <returns>å·¡å›ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒãƒ¼ãƒ‰ã®è©•ä¾¡çµæœ</returns>
     public NodeStatus Patrol()
     {
-        // –Ú•W’n“_‚ª‘¶İ‚·‚éê‡
+        // ç›®æ¨™åœ°ç‚¹ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (_patrolDestination.HasValue)
         {
-            // –Ú•W’n“_‚É“’B‚µ‚½ê‡
+            // ç›®æ¨™åœ°ç‚¹ã«åˆ°é”ã—ãŸå ´åˆ
             if (IsArrivedAtPatrolDestination())
             {
-                // –Ú•W’n“_‚ğƒNƒŠƒA‚µ‚ÄA¬Œ÷‚Ì•]‰¿Œ‹‰Ê‚ğ•Ô‚·
+                // ç›®æ¨™åœ°ç‚¹ã‚’ã‚¯ãƒªã‚¢ã—ã¦ã€æˆåŠŸã®è©•ä¾¡çµæœã‚’è¿”ã™
                 _patrolDestination = null;
                 return NodeStatus.Success;
             }
-            // –Ú•W’n“_‚É“’B‚µ‚Ä‚¢‚È‚¢ê‡
+            // ç›®æ¨™åœ°ç‚¹ã«åˆ°é”ã—ã¦ã„ãªã„å ´åˆ
             else
             {
-                // –Ú•W’n“_‚Ì•ûŒü‚Ö‰ñ“]’†‚Å‚ ‚éê‡
+                // ç›®æ¨™åœ°ç‚¹ã®æ–¹å‘ã¸å›è»¢ä¸­ã§ã‚ã‚‹å ´åˆ
                 if (!_isRotating)
                 {
-                    // ‘O•û‚ÖˆÚ“®‚³‚¹‚é
+                    // å‰æ–¹ã¸ç§»å‹•ã•ã›ã‚‹
                     MoveForward();
                 }   
             }
         }
-        // –Ú•W’n“_‚ª‘¶İ‚µ‚È‚¢ê‡
+        // ç›®æ¨™åœ°ç‚¹ãŒå­˜åœ¨ã—ãªã„å ´åˆ
         else
         {
-            // ƒ‰ƒ“ƒ_ƒ€‚È–Ú•W’n“_‚ğİ’è‚·‚é
+            // ãƒ©ãƒ³ãƒ€ãƒ ãªç›®æ¨™åœ°ç‚¹ã‚’è¨­å®šã™ã‚‹
             SetRandomDestination();
 
-            // –Ú•W’n“_‚Ì•ûŒü‚Ö‰ñ“]‚³‚¹‚é
+            // ç›®æ¨™åœ°ç‚¹ã®æ–¹å‘ã¸å›è»¢ã•ã›ã‚‹
             StartCoroutine(RotateTowardsDestination());
         }
 
-        // Às’†‚Ì•]‰¿Œ‹‰Ê‚ğ•Ô‚·
+        // å®Ÿè¡Œä¸­ã®è©•ä¾¡çµæœã‚’è¿”ã™
         return NodeStatus.Running;
     }
 
     //-------------------------------------------------------------------------------
-    // „‰ñ‚ÉŠÖ‚·‚éˆ—
+    // å·¡å›ã«é–¢ã™ã‚‹å‡¦ç†
     //-------------------------------------------------------------------------------
 
-    /// <summary>„‰ñ‚·‚é–Ú•W’n“_‚É“’B‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©</summary>
+    /// <summary>å·¡å›ã™ã‚‹ç›®æ¨™åœ°ç‚¹ã«åˆ°é”ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹</summary>
     private bool IsArrivedAtPatrolDestination()
     {
         return Vector3.Distance(transform.position, _patrolDestination.Value) 
             < ARRIVAL_THRESHOLD ? true : false;
     }
 
-    /// <summary>„‰ñ‚·‚é–Ú•W’n“_‚ğƒ‰ƒ“ƒ_ƒ€‚Éİ’è‚·‚é</summary>
+    /// <summary>å·¡å›ã™ã‚‹ç›®æ¨™åœ°ç‚¹ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«è¨­å®šã™ã‚‹</summary>
     private void SetRandomDestination()
     {
-        // „‰ñ”ÍˆÍ‚ğ”¼Œa‚Æ‚·‚é‹…“à‚ÌAƒ‰ƒ“ƒ_ƒ€‚È’n“_‚ğæ“¾‚·‚é
-        Vector3 randomPos = Random.insideUnitSphere * _patrolRadius;
+        // ç›®æ¨™åœ°ç‚¹ã¸ã®å›è»¢è§’åº¦
+        float rotationAngle; 
 
-        // ƒ‰ƒ“ƒ_ƒ€‚È’n“_‚ÌYÀ•W‚ğ0‚Éİ’è‚·‚é
-        randomPos.y = 0;
+        // ãƒ©ãƒ³ãƒ€ãƒ ãªåœ°ç‚¹
+        Vector3 randomPos;
 
-        // ƒ‰ƒ“ƒ_ƒ€‚È’n“_‚ÍŒ´“_‚ğ’†S‚Æ‚µ‚Ä‚¢‚é‚½‚ßAƒLƒƒƒ‰ƒNƒ^[‚ÌˆÊ’u‚ğ‰ÁZ‚·‚é
-        randomPos += transform.position;
+        do
+        {
+            // å·¡å›ç¯„å›²ã‚’åŠå¾„ã¨ã™ã‚‹çƒå†…ã®ã€ãƒ©ãƒ³ãƒ€ãƒ ãªåœ°ç‚¹ã‚’å–å¾—ã™ã‚‹
+            randomPos = Random.insideUnitSphere * _patrolRadius;
 
-        // –Ú“I’n‚ğƒ‰ƒ“ƒ_ƒ€‚È’n“_‚Éİ’è‚·‚é
+            // ãƒ©ãƒ³ãƒ€ãƒ ãªåœ°ç‚¹ã®Yåº§æ¨™ã‚’0ã«è¨­å®šã™ã‚‹
+            randomPos.y = 0;
+
+            // ãƒ©ãƒ³ãƒ€ãƒ ãªåœ°ç‚¹ã¯åŸç‚¹ã‚’ä¸­å¿ƒã¨ã—ã¦ã„ã‚‹ãŸã‚ã€ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ä½ç½®ã‚’åŠ ç®—ã™ã‚‹
+            randomPos += transform.position;
+
+            // ãƒ©ãƒ³ãƒ€ãƒ ãªåœ°ç‚¹ã¸ã®æ–¹å‘ã‚’æ±‚ã‚ã‚‹
+            Vector3 directionToRandomPos = (randomPos - transform.position).normalized;
+
+            // ç¾åœ¨ã®æ–¹å‘(ãƒ­ãƒœãƒƒãƒˆã®å‰æ–¹)ã¨ãƒ©ãƒ³ãƒ€ãƒ ãªåœ°ç‚¹ã¸ã®æ–¹å‘ã¨ã®é–“ã®è§’åº¦ã‚’æ±‚ã‚ã‚‹
+            rotationAngle = Vector3.Angle(transform.forward, directionToRandomPos);
+        }
+        // å›è»¢è·é›¢ãŒæœ€å°å›è»¢è§’åº¦ã‚’ä¸Šå›ã‚‹ã¾ã§ç¹°ã‚Šè¿”ã™
+        while (rotationAngle < MIN_ANGLE);
+
+        // ç›®çš„åœ°ã‚’ãƒ©ãƒ³ãƒ€ãƒ ãªåœ°ç‚¹ã«è¨­å®šã™ã‚‹
         _patrolDestination = randomPos;
     }
 
-    /// <summary>‘O•û‚ÉˆÚ“®‚³‚¹‚é</summary>
+    /// <summary>å‰æ–¹ã«ç§»å‹•ã•ã›ã‚‹</summary>
     private void MoveForward()
     {
         _controller.Move(transform.forward * _patrolSpeed * Time.deltaTime);
     }
 
-    /// <summary>–Ú•W’n“_‚Ì•ûŒü‚Ö‰ñ“]‚³‚¹‚éƒRƒ‹[ƒ`ƒ“</summary>
+    /// <summary>ç›®æ¨™åœ°ç‚¹ã®æ–¹å‘ã¸å›è»¢ã•ã›ã‚‹ã‚³ãƒ«ãƒ¼ãƒãƒ³</summary>
     IEnumerator RotateTowardsDestination()
     {
-        // –Ú•W’n“_‚ª‘¶İ‚·‚éê‡
+        // ç›®æ¨™åœ°ç‚¹ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (_patrolDestination.HasValue)
         {
-            // –Ú•W’n“_‚Ö‚ÌƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+            // ç›®æ¨™åœ°ç‚¹ã¸ã®æ–¹å‘ã‚’æ±‚ã‚ã‚‹
             var dir = (_patrolDestination.Value - transform.position).normalized;
 
-            // ƒxƒNƒgƒ‹‚ğŠî‚ÉA–Ú•W’n“_‚Ö‚Ì‰ñ“]•ûŒü‚ğ‹‚ß‚é
+            // æ±‚ã‚ãŸæ–¹å‘ã‚’åŸºã«ã€ç›®æ¨™åœ°ç‚¹ã¸ã®å›è»¢æ–¹å‘ã‚’æ±‚ã‚ã‚‹
             Quaternion lookRotation = Quaternion.LookRotation(dir);
 
-            // –Ú•W’n“_‚Ö‰ñ“]’†‚Å‚ ‚é‚±‚Æ‚ğ¦‚·ƒtƒ‰ƒO‚ğƒIƒ“‚É‚·‚é
+            // ç›®æ¨™åœ°ç‚¹ã¸å›è»¢ä¸­ã§ã‚ã‚‹ã“ã¨ã‚’ç¤ºã™ãƒ•ãƒ©ã‚°ã‚’ã‚ªãƒ³ã«ã™ã‚‹
             _isRotating = true;
 
-            // –Ú•W’n“_‚Ì•ûŒü‚Ö‰ñ“]‚³‚¹‚é
+            // ç›®æ¨™åœ°ç‚¹ã®æ–¹å‘ã¸å›è»¢ã•ã›ã‚‹
             Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, 1.5f);
 
-            // ‰ñ“]‚ÌŠ®—¹‚ğ‘Ò‹@‚·‚é
+            // å›è»¢ã®å®Œäº†ã‚’å¾…æ©Ÿã™ã‚‹
             yield return rotationTween.WaitForCompletion();
 
-            // –Ú•W’n“_‚Ö‰ñ“]’†‚Å‚ ‚é‚±‚Æ‚ğ¦‚·ƒtƒ‰ƒO‚ğƒIƒt‚É‚·‚é
+            // ç›®æ¨™åœ°ç‚¹ã¸å›è»¢ä¸­ã§ã‚ã‚‹ã“ã¨ã‚’ç¤ºã™ãƒ•ãƒ©ã‚°ã‚’ã‚ªãƒ•ã«ã™ã‚‹
             _isRotating = false;
         }
-        // –Ú•W’n“_‚ª‘¶İ‚µ‚È‚¢ê‡
+        // ç›®æ¨™åœ°ç‚¹ãŒå­˜åœ¨ã—ãªã„å ´åˆ
         else
         {
-            // ƒGƒ‰[ƒƒO‚ğo—Í‚µ‚Äˆ—‚ğ”²‚¯‚é
+            // ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ã‚’å‡ºåŠ›ã—ã¦å‡¦ç†ã‚’æŠœã‘ã‚‹
             Debug.LogError("Destination not Set.");
             yield break;
         }
