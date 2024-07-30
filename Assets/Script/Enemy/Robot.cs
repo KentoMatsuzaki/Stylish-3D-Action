@@ -188,19 +188,30 @@ public class Robot : MonoBehaviour
         }
     }
 
+    /// <summary>衝突判定を行う</summary>
+    /// <returns>true = 衝突が発生した、　false = 衝突が発生しなかった</returns>
     private bool IsCollided()
     {
+        // レイキャストの衝突情報を格納する変数
         RaycastHit hit;
 
+        // キャラクターの現在の位置を取得
         Vector3 currentPos = transform.position;
+
+        // レイキャストを飛ばす位置を設定
         Vector3 raycastPos = new Vector3(currentPos.x, 0.5f, currentPos.z);
-        if(Physics.Raycast(raycastPos, transform.forward, out hit, 1.5f))
+
+        // レイキャストを前方に飛ばし、衝突が発生した場合はtrueを返す
+        if (Physics.Raycast(raycastPos, transform.forward, out hit, 1.5f))
         {
-            if(hit.collider)
+            // 接触したオブジェクトが存在する場合
+            if (hit.collider)
             {
                 return true;
             }
         }
+
+        // 衝突が発生しなかった場合はfalseを返す
         return false;
     }
 
