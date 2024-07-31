@@ -21,7 +21,10 @@ public class Robot : MonoBehaviour
     [SerializeField, Header("巡回時の移動速度")] private float _patrolSpeed = 1f;
 
     /// <summary>プレイヤーを感知する距離</summary>
-    private const float DETECTION_RANGE = 2.5f;
+    private const float DETECTION_RANGE = 5f;
+
+    /// <summary>プレイヤーを感知する距離のプロパティ</summary>
+    public float DetectionRange => DETECTION_RANGE;
 
     /// <summary>巡回する目標地点に到達したかどうかを判定する閾値</summary>
     private const float ARRIVAL_THRESHOLD = 0.5f;
@@ -55,7 +58,8 @@ public class Robot : MonoBehaviour
         // 初期化アニメーションの再生が終了していない場合は、処理を抜ける
         if (!_isInitialized) return;
 
-        Patrol();
+        if(IsPlayerDetected()) Destroy(gameObject);
+        else Patrol();
     }
 
     //-------------------------------------------------------------------------------
