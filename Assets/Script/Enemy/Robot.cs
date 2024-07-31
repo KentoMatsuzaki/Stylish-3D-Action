@@ -21,7 +21,7 @@ public class Robot : MonoBehaviour
     [SerializeField, Header("巡回時の移動速度")] private float _patrolSpeed = 1f;
 
     /// <summary>プレイヤーを感知する距離</summary>
-    private const float DETECTION_RANGE = 5f;
+    private const float DETECTION_RANGE = 7.5f;
 
     /// <summary>プレイヤーを感知する距離のプロパティ</summary>
     public float DetectionRange => DETECTION_RANGE;
@@ -88,8 +88,13 @@ public class Robot : MonoBehaviour
             return false;
         }
 
-        // プレイヤーとの距離が感知距離よりも小さい場合はtrueを返す
-        float distance = Vector3.Distance(transform.position, Player.Instance.transform.position);
+        // プレイヤーと自身の位置を取得する
+        Vector3 playerPos = Player.Instance.transform.position;
+        Vector3 currentPos = transform.position;
+
+        // Y座標を無視してプレイヤーとの距離を求め、感知距離よりも小さい場合はtrueを返す
+        float distance = Vector3.Distance(new Vector3(currentPos.x, 0, currentPos.z), 
+            new Vector3(playerPos.x, 0, playerPos.z));
         return distance < DETECTION_RANGE;
     }
 

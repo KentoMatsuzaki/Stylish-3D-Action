@@ -3150,7 +3150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b064dbdb804e74418a1703c85dba15c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _patrolRadius: 5
+  _patrolRadius: 7.5
   _patrolSpeed: 1
 --- !u!4 &8388172545169041247
 Transform:
