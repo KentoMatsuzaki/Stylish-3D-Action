@@ -69,9 +69,6 @@ public class Player : MonoBehaviour
         {
             // インスタンスを登録する
             Instance = this;
-
-            // シーンの遷移時にプレイヤーが破棄されないようにする
-            DontDestroyOnLoad(gameObject);
         }
 
         // インスタンスが存在する場合

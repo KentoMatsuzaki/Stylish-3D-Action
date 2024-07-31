@@ -41,6 +41,9 @@ public class Robot : MonoBehaviour
     /// <summary>レイキャストを飛ばす距離</summary>
     private const float RAYCAST_DISTANCE = 1.5f;
 
+    /// <summary>追跡を停止する距離の閾値</summary>
+    private const float CHASING_THRESHOLD = 2.5f;
+
     /// <summary>巡回する目標地点の方向へ回転中であることを示すフラグ</summary>
     private bool _isRotating = false;
 
@@ -104,7 +107,7 @@ public class Robot : MonoBehaviour
 
     /// <summary>目標地点を巡回させる</summary>
     /// <returns>巡回アクションノードの評価結果</returns>
-    public NodeStatus Patrol()
+    private NodeStatus Patrol()
     {
         // 目標地点が存在する場合
         if (_patrolDestination.HasValue)
@@ -280,4 +283,17 @@ public class Robot : MonoBehaviour
         // レイキャストを表示する
         Gizmos.DrawRay(raycastPos, transform.forward * RAYCAST_DISTANCE);
     }
+
+    //-------------------------------------------------------------------------------
+    // 追跡
+    //-------------------------------------------------------------------------------
+
+    /// <summary>プレイヤーを追跡する</summary>
+    /// <returns>追跡アクションノードの評価結果</returns>
+    //private NodeStatus Chase()
+    //{
+        
+    //}
+
+    
 }
