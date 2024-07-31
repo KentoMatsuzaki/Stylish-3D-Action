@@ -57,7 +57,30 @@ public class Player : MonoBehaviour
     /// <summary>敵のレイヤーマスク</summary>
     [SerializeField, Header("敵のレイヤーマスク")] private LayerMask _enemyLayer;
 
+    /// <summary>プレイヤーのインスタンス</summary>
+    public static Player Instance {  get; private set; }
+
     [SerializeField] Text _text;
+
+    private void Awake()
+    {
+        // インスタンスが存在しない場合
+        if (Instance == null)
+        {
+            // インスタンスを登録する
+            Instance = this;
+
+            // シーンの遷移時にプレイヤーが破棄されないようにする
+            DontDestroyOnLoad(gameObject);
+        }
+
+        // インスタンスが存在する場合
+        else
+        {
+            // ゲームオブジェクトを破棄する
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
