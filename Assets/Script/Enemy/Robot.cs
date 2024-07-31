@@ -15,10 +15,13 @@ public class Robot : MonoBehaviour
     Vector3? _patrolDestination;
 
     /// <summary>巡回する目標地点を求める際の球の半径</summary>
-    [SerializeField, Header("巡回する範囲の半径")]  private float _patrolRadius = 5f;
+    [SerializeField, Header("巡回する範囲の半径")] private float _patrolRadius = 5f;
 
     /// <summary>巡回する際の移動速度</summary>
     [SerializeField, Header("巡回時の移動速度")] private float _patrolSpeed = 1f;
+
+    /// <summary>プレイヤーを感知する距離</summary>
+    private const float DETECTION_RANGE = 2.5f;
 
     /// <summary>巡回する目標地点に到達したかどうかを判定する閾値</summary>
     private const float ARRIVAL_THRESHOLD = 0.5f;
@@ -40,6 +43,9 @@ public class Robot : MonoBehaviour
 
     /// <summary>初期化アニメーションが完了したことを示すフラグ</summary>
     private bool _isInitialized = false;
+
+    /// <summary>プレイヤーのインスタンス</summary>
+    private Player _player;
 
     private void Start()
     {
@@ -63,6 +69,23 @@ public class Robot : MonoBehaviour
     public void SetIsInitializedTrue()
     {
         _isInitialized = true;
+    }
+
+    //-------------------------------------------------------------------------------
+    // 条件ノード
+    //-------------------------------------------------------------------------------
+
+    /// <summary>プレイヤーを感知しているか</summary>
+    private bool IsPlayerDetected()
+    {
+        if (_player == null)
+        {
+            Debug.LogError("Player not set.");
+            return false;
+        }
+        // プレイヤーとの距離が感知距離よりも小さい場合はtrueを返す
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
+        return distance < DETECTION_RANGE;
     }
 
     //-------------------------------------------------------------------------------
