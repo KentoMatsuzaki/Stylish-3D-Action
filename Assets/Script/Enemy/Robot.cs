@@ -44,9 +44,6 @@ public class Robot : MonoBehaviour
     /// <summary>初期化アニメーションが完了したことを示すフラグ</summary>
     private bool _isInitialized = false;
 
-    /// <summary>プレイヤーのインスタンス</summary>
-    private Player _player;
-
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -76,15 +73,19 @@ public class Robot : MonoBehaviour
     //-------------------------------------------------------------------------------
 
     /// <summary>プレイヤーを感知しているか</summary>
+    /// <returns>プレイヤーが感知範囲内にいる場合はtrue、そうでない場合はfalse</returns>
     private bool IsPlayerDetected()
     {
-        if (_player == null)
+        // プレイヤーのインスタンスが存在しない場合
+        if (Player.Instance == null)
         {
-            Debug.LogError("Player not set.");
+            // エラーログを出力してfalseを返す
+            Debug.LogError("Player instance not found.");
             return false;
         }
+
         // プレイヤーとの距離が感知距離よりも小さい場合はtrueを返す
-        float distance = Vector3.Distance(transform.position, _player.transform.position);
+        float distance = Vector3.Distance(transform.position, Player.Instance.transform.position);
         return distance < DETECTION_RANGE;
     }
 
