@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17b763de69129e94683b9376c290f9cf, type: 3}
+  m_Name: Blood
+  m_EditorClassIdentifier: 
+  _rightSlashEffect: {fileID: 4235492834679706928, guid: a77e704b7ea9880478a0a3ad50e9a45a, type: 3}
+  _leftSlashEffect: {fileID: 4235492834679706928, guid: 8b361bccff4b7394cac7fe2ee990ca88, type: 3}
+  _lowerRightAltEffect: {fileID: 4235492834679706928, guid: 306e4de8d02487b4c86dc66d64511eac, type: 3}
+  _lowerLeftAltEffect: {fileID: 4235492834679706928, guid: 5f137d011af77504f9085bf8c0d03ffe, type: 3}
+  _upperRightAltEffect: {fileID: 4235492834679706928, guid: 91d471426b51888418a2071d11f8950e, type: 3}
+  _upperLeftAltEffect: {fileID: 4235492834679706928, guid: b0f011970e8d77944b92d5f7047e7f9f, type: 3}

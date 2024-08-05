@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17b763de69129e94683b9376c290f9cf, type: 3}
+  m_Name: Blue Flame
+  m_EditorClassIdentifier: 
+  _rightSlashEffect: {fileID: 6505300597301722737, guid: 9c81abeb3238bc24ca5bc1c9f585f761, type: 3}
+  _leftSlashEffect: {fileID: 6505300597301722737, guid: a175086408e50654a91bc67becddc2c7, type: 3}
+  _lowerRightAltEffect: {fileID: 6505300597301722737, guid: 5966a979801b4734fa22b719f1d170d2, type: 3}
+  _lowerLeftAltEffect: {fileID: 6505300597301722737, guid: 66f05815ad86ac8449f7c90909f77bb8, type: 3}
+  _upperRightAltEffect: {fileID: 6505300597301722737, guid: 37a9233b80dadb146befae5ddc64dfa3, type: 3}
+  _upperLeftAltEffect: {fileID: 6505300597301722737, guid: 623ff75a3527e3f48abcdfb093e916b7, type: 3}
