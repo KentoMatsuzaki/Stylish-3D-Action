@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Nebula
   m_EditorClassIdentifier: 
   _enchantment: 4
-  _rightSlashEffect: {fileID: 0}
-  _leftSlashEffect: {fileID: 0}
+  _rightSlashEffect: {fileID: 7489176645323221291, guid: 71ea636a52cb09e4c918c22fa9993369, type: 3}
+  _leftSlashEffect: {fileID: 7489176645323221291, guid: f2ae9c50140c90642acf997fdce27b34, type: 3}

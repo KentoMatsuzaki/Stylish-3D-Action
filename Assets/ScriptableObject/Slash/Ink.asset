@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Ink
   m_EditorClassIdentifier: 
   _enchantment: 1
-  _rightSlashEffect: {fileID: 0}
-  _leftSlashEffect: {fileID: 0}
+  _rightSlashEffect: {fileID: 2445758773746371492, guid: 0bb93b89c51d7c0459bf78a9082629a3, type: 3}
+  _leftSlashEffect: {fileID: 2445758773746371492, guid: a742345791dd62e4980c6241af248934, type: 3}

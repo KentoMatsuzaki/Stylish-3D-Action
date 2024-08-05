@@ -1,9 +1,9 @@
 using UnityEngine;
 
-/// <summary>特殊エフェクトのデータをまとめたクラス</summary>
-[CreateAssetMenu(fileName = "AltEffectData", menuName = "ScriptableObjects/AltEffectData")]
+/// <summary>特殊エフェクト(斬り下げ)のデータをまとめたクラス</summary>
+[CreateAssetMenu(fileName = "UpperAltEffectData", menuName = "ScriptableObjects/UpperAltEffectData")]
 
-public class AltEffectData : ScriptableObject
+public class UpperAltEffectData : ScriptableObject
 {
     /// <summary>斬撃の付加効果</summary>
     public SlashEnchantment _enchantment;
@@ -13,5 +13,4 @@ public class AltEffectData : ScriptableObject
 
     /// <summary>特殊エフェクト(左)</summary>
     public GameObject _leftAltEffect;
-
 }

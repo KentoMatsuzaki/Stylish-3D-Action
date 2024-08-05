@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Water
   m_EditorClassIdentifier: 
   _enchantment: 6
-  _rightSlashEffect: {fileID: 0}
-  _leftSlashEffect: {fileID: 0}
+  _rightSlashEffect: {fileID: 3432907777765461413, guid: 7dc5c40de9b600442904f914f55af746, type: 3}
+  _leftSlashEffect: {fileID: 3432907777765461413, guid: 931cdd734ae0fa94382c52dc29c0165a, type: 3}

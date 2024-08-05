@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Red Flame
   m_EditorClassIdentifier: 
   _enchantment: 2
-  _rightSlashEffect: {fileID: 0}
-  _leftSlashEffect: {fileID: 0}
+  _rightSlashEffect: {fileID: 4421458402118248255, guid: f791457c214ef8145856f9990c8cd268, type: 3}
+  _leftSlashEffect: {fileID: 4421458402118248255, guid: 9dcb729c2e8785a418df839599067cfb, type: 3}

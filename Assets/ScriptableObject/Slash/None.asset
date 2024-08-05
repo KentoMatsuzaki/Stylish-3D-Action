@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: None
   m_EditorClassIdentifier: 
   _enchantment: 0
-  _rightSlashEffect: {fileID: 0}
-  _leftSlashEffect: {fileID: 0}
+  _rightSlashEffect: {fileID: 7537885031752861107, guid: 3e1ea56b33e335748b677e39c40367e1, type: 3}
+  _leftSlashEffect: {fileID: 7537885031752861107, guid: 3e1ea56b33e335748b677e39c40367e1, type: 3}

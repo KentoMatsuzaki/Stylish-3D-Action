@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Blood
   m_EditorClassIdentifier: 
   _enchantment: 5
-  _rightSlashEffect: {fileID: 0}
-  _leftSlashEffect: {fileID: 0}
+  _rightSlashEffect: {fileID: 4235492834679706928, guid: a77e704b7ea9880478a0a3ad50e9a45a, type: 3}
+  _leftSlashEffect: {fileID: 4235492834679706928, guid: 8b361bccff4b7394cac7fe2ee990ca88, type: 3}

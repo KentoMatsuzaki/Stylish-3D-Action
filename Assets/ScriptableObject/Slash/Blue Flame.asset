@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Blue Flame
   m_EditorClassIdentifier: 
   _enchantment: 3
-  _rightSlashEffect: {fileID: 0}
-  _leftSlashEffect: {fileID: 0}
+  _rightSlashEffect: {fileID: 6505300597301722737, guid: 9c81abeb3238bc24ca5bc1c9f585f761, type: 3}
+  _leftSlashEffect: {fileID: 6505300597301722737, guid: a175086408e50654a91bc67becddc2c7, type: 3}
