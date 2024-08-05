@@ -1,5 +1,5 @@
-/// <summary>斬撃の付加効果</summary>
-public enum SlashEnchantment
+/// <summary>攻撃の付加効果</summary>
+public enum AttackEnchantment
 {
     /// <summary>エンチャントなし</summary>
     None,
