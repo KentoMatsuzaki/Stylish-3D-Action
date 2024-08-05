@@ -2,6 +2,7 @@ using UnityEngine;
 
 /// <summary>斬撃エフェクトのデータをまとめたクラス</summary>
 [CreateAssetMenu(fileName = "SlashEffectData", menuName = "ScriptableObjects/SlashEffectData")]
+
 public class SlashEffectData : ScriptableObject
 {
     /// <summary>斬撃の付加効果</summary>
