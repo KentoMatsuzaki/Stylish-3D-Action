@@ -1,4 +1,4 @@
-/// <summary>攻撃の付加効果</summary>
+/// <summary>攻撃の付加効果を表す列挙型</summary>
 public enum AttackEnchantment
 {
     /// <summary>エンチャントなし</summary>

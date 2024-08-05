@@ -11,6 +11,10 @@ public class EffectManager : Singleton<EffectManager>
     [SerializeField, Header("攻撃エフェクトデータのリスト")]
         private List<AttackEffectData> _attackEffectList = new List<AttackEffectData>();
 
+    //-------------------------------------------------------------------------------
+    // 攻撃エフェクトを生成する処理
+    //-------------------------------------------------------------------------------
+
     /// <summary>斬撃エフェクトを生成して表示するメソッド</summary>
     /// <param name="hand">攻撃に使用する手を表す列挙型</param>
     public void CreateSlashEffect(AttackHand hand)
@@ -97,6 +101,10 @@ public class EffectManager : Singleton<EffectManager>
                 Debug.LogError($"Invalid hand selected : {hand}"); break;
         }
     }
+
+    //-------------------------------------------------------------------------------
+    // 攻撃エフェクトの生成に関する処理
+    //-------------------------------------------------------------------------------
 
     /// <summary>攻撃エフェクトを生成する位置を求める</summary>
     private Vector3 GetAttackEffectPosition()
