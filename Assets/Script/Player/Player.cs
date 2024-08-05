@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
     [SerializeField, Header("UŒ‚”»’è‚Ì‘±ŠÔ")] private float _attackDuration;
 
     /// <summary>UŒ‚‚Ì‘®«</summary>
-    [SerializeField, Header("UŒ‚‚Ì‘®«")] public AttackEffectType _attackEffectType;
+    [SerializeField, Header("UŒ‚‚Ì‘®«")] public SlashEnchantment _attackEffectType;
 
     /// <summary>•‚—V‚ÉÁ”ï‚³‚ê‚éƒGƒlƒ‹ƒM[</summary>
     [SerializeField, Header("•‚—VƒGƒlƒ‹ƒM[")] private float _floatEnergy = 1f;
