@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>特殊エフェクト</summary>
 public class AltEffect : AttackEffectBase
 {
     /// <summary>パーティクルを停止させるまでの遅延時間</summary>
