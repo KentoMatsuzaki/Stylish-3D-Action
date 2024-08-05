@@ -9,6 +9,7 @@ public class SlashEffect : AttackEffectBase
         base.Start();
     }
 
+    /// <summary>斬撃エフェクト固有の処理</summary>
     protected override void UniqueAction()
     {
         
