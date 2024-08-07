@@ -4,114 +4,106 @@ using System.Collections.Generic;
 /// <summary>各種エフェクトを管理するクラス</summary>
 public class EffectManager : Singleton<EffectManager>
 {
-    /// <summary>攻撃エフェクトを生成する際の高さのオフセット</summary>
-    [SerializeField] private float _attackEffectHeightOffset = 1.25f;
+    /// <summary>斬撃エフェクトを生成する際の高さのオフセット</summary>
+    [SerializeField] private float _slashEffectHeightOffset = 1.25f;
 
-    /// <summary>攻撃エフェクトデータのリスト</summary>
-    [SerializeField, Header("攻撃エフェクトデータのリスト")]
-        private List<AttackEffectData> _attackEffectList = new List<AttackEffectData>();
+    /// <summary>斬撃エフェクトデータのリスト</summary>
+    [SerializeField, Header("斬撃エフェクトデータのリスト")]
+        private List<SlashEffectData> _slashEffectDataList = new List<SlashEffectData>();
 
     //-------------------------------------------------------------------------------
-    // 攻撃エフェクトを生成する処理
+    // 斬撃エフェクトを生成する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>斬撃エフェクトを生成して表示するメソッド</summary>
-    /// <param name="hand">攻撃に使用する手を表す列挙型</param>
-    public void CreateSlashEffect(AttackHand hand)
+    /// <summary>水平の斬撃エフェクトを生成する共通メソッド</summary>
+    public void CreateHorizontalSlashEffect(AttackHand hand)
     {
-        switch(hand)
-        {
-            // 右手
-            case AttackHand.Right:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._rightSlashEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
+        var effects = GetSlashEffect(SlashType.Horizontal, hand);
 
-            // 左手
-            case AttackHand.Left:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._leftSlashEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
-
-            // 両手の場合は、右と左のエフェクトを両方生成する
-            case AttackHand.Both:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._rightSlashEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform);
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._leftSlashEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
-
-            // 例外的な処理
-            default:
-                Debug.LogError($"Invalid hand selected : {hand}"); break;
-        }
+        effects.ForEach(effect => CreateEffect(effect, GetAttackEffectPosition()));
     }
 
-    /// <summary>特殊エフェクト（斬り上げ）を生成して表示するメソッド</summary>
-    /// <param name="hand">攻撃に使用する手を表す列挙型</param>
-    public void CreateLowerAltEffect(AttackHand hand)
+    /// <summary>斬り上げの斬撃エフェクトを生成する共通メソッド</summary>
+    public void CreateLowerSlashEffect(AttackHand hand)
     {
-        switch (hand)
-        {
-            // 右手
-            case AttackHand.Right:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._lowerRightAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
+        var effects = GetSlashEffect(SlashType.Lower, hand);
 
-            // 左手
-            case AttackHand.Left:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._lowerLeftAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
-
-            // 両手の場合は、右と左のエフェクトを両方生成する
-            case AttackHand.Both:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._lowerRightAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform);
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._lowerLeftAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
-
-            // 例外的な処理
-            default:
-                Debug.LogError($"Invalid hand selected : {hand}"); break;
-        }
+        effects.ForEach(effect => CreateEffect(effect, GetAttackEffectPosition()));
     }
 
-    /// <summary>特殊エフェクト（斬り下げ）を生成して表示するメソッド</summary>
-    /// <param name="hand">攻撃に使用する手を表す列挙型</param>
-    public void CreateUpperAltEffect(AttackHand hand)
+    /// <summary>斬り下げの斬撃エフェクトを生成する共通メソッド</summary>
+    public void CreateUpperSlashEffect(AttackHand hand)
     {
-        switch (hand)
-        {
-            // 右手
-            case AttackHand.Right:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._upperRightAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
+        var effects = GetSlashEffect(SlashType.Upper, hand);
 
-            // 左手
-            case AttackHand.Left:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._upperLeftAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
-
-            // 両手の場合は、右と左のエフェクトを両方生成する
-            case AttackHand.Both:
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._upperRightAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform);
-                Instantiate(_attackEffectList[(int)Player.Instance.Enchantment]._upperLeftAltEffect,
-                    GetAttackEffectPosition(), Quaternion.identity, transform); break;
-
-            // 例外的な処理
-            default:
-                Debug.LogError($"Invalid hand selected : {hand}"); break;
-        }
+        effects.ForEach(effect => CreateEffect(effect, GetAttackEffectPosition()));
     }
 
     //-------------------------------------------------------------------------------
-    // 攻撃エフェクトの生成に関する処理
+    // 斬撃エフェクトの生成に関する処理
     //-------------------------------------------------------------------------------
+
+    /// <summary>エフェクトを生成する共通メソッド</summary>
+    /// <param name="effectPrefab">エフェクトのプレハブ</param>
+    /// <param name="position">生成位置</param>
+    private void CreateEffect(GameObject effectPrefab, Vector3 position)
+    {
+        Instantiate(effectPrefab, position, Quaternion.identity, transform);
+    }
 
     /// <summary>攻撃エフェクトを生成する位置を求める</summary>
     private Vector3 GetAttackEffectPosition()
     {
         // プレイヤーの位置にオフセットを加えた位置を求めて返す
         Vector3 playerPos = Player.Instance.transform.position;
-        Vector3 effectPos = new Vector3(playerPos.x, playerPos.y + _attackEffectHeightOffset, playerPos.z);
+        Vector3 effectPos = new Vector3(playerPos.x, playerPos.y + _slashEffectHeightOffset, playerPos.z);
         return effectPos;
+    }
+
+    /// <summary>斬撃エフェクトを取得する</summary>
+    /// <returns>斬撃エフェクトのプレハブのリスト</returns>
+    private List<GameObject> GetSlashEffect(SlashType type, AttackHand hand)
+    {
+        // プレイヤーがもつ斬撃の属性を基に、斬撃エフェクトのデータを取得する
+        var data = _slashEffectDataList[(int)Player.Instance.Enchantment];
+
+        // 斬撃エフェクトを格納するリストを作成する
+        var effects = new List<GameObject>();
+
+        switch(type)
+        {
+            case SlashType.Horizontal:
+
+                if(IsRightHandSlash(hand)) effects.Add(data._horizontalRightSlashEffect);
+                if(IsLeftHandSlash(hand)) effects.Add(data._horizontalLeftSlashEffect); break;
+
+            case SlashType.Lower:
+
+                if(IsRightHandSlash(hand)) effects.Add(data._lowerRightSlashEffect);
+                if(IsLeftHandSlash(hand)) effects.Add(data._lowerLeftSlashEffect); break;
+
+            case SlashType.Upper:
+
+                if(IsRightHandSlash(hand)) effects.Add(data._upperRightSlashEffect);
+                if(IsLeftHandSlash(hand)) effects.Add(data._upperLeftSlashEffect); break;   
+        }
+
+        return effects;
+    }
+
+    /// <summary>右手による斬撃かどうか</summary>
+    /// <returns>true = 右手・両手，false = 左手</returns>
+    private bool IsRightHandSlash(AttackHand hand)
+    {
+        if(hand == AttackHand.Right ||  hand == AttackHand.Both) return true;
+        else return false;
+    }
+
+    /// <summary>左手による斬撃かどうか</summary>
+    /// <returns>true = 左手・両手, false = 右手</returns>
+    private bool IsLeftHandSlash(AttackHand hand)
+    {
+        if (hand == AttackHand.Left || hand == AttackHand.Both) return true;
+        else return false;
     }
 }

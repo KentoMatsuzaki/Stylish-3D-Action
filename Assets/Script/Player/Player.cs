@@ -45,8 +45,11 @@ public class Player : MonoBehaviour
     /// <summary>攻撃判定の持続時間</summary>
     [SerializeField, Header("攻撃判定の持続時間")] private float _attackDuration;
 
-    /// <summary>攻撃の属性</summary>
-    [SerializeField, Header("攻撃の属性")] public SlashEnchantment _attackEffectType;
+    /// <summary>斬撃の属性</summary>
+    [SerializeField, Header("攻撃の属性")] private SlashEnchantment _enchantment;
+
+    /// <summary>斬撃の属性のプロパティ</summary>
+    public SlashEnchantment Enchantment => _enchantment;
 
     /// <summary>浮遊に消費されるエネルギー</summary>
     [SerializeField, Header("浮遊エネルギー")] private float _floatEnergy = 1f;
@@ -402,37 +405,19 @@ public class Player : MonoBehaviour
 
     public void DisableLeftSwordCollider() => _leftSwordAttacker.DisableCollider();
 
-    /// <summary>斬撃エフェクトを生成・表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手、2が両手）</param>
-    public void PlaySlashEffect(int handIndex)
+    private void PlayLowerSlashEffect(int attackHandIndex)
     {
-        // プレイヤーの座標を元に、正しい位置にエフェクトを生成する
-        Vector3 playerPos = transform.position;
-        var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
-        EffectManager.Instance.PlaySlashEffect(_attackEffectType, effectPos, transform, handIndex);
+        EffectManager.Instance.CreateLowerSlashEffect((AttackHand)attackHandIndex);
     }
 
-    /// <summary>斬撃エフェクト（下方）を生成・表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手）</param>
-    public void PlayLowerAltEffect(int handIndex)
+    private void PlayUpperSlashEffect(int attackHandIndex)
     {
-        // プレイヤーの座標を元に、正しい位置にエフェクトを生成する
-        Vector3 playerPos = transform.position;
-        var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
-        EffectManager.Instance.PlayLowerAltEffect(_attackEffectType, effectPos, transform, handIndex);
+        EffectManager.Instance.CreateLowerSlashEffect((AttackHand)attackHandIndex);
     }
 
-    /// <summary>斬撃エフェクト（上方）を生成・表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手）</param>
-    public void PlayUpperAltEffect(int handIndex)
+    private void PlayHorizontalSlashEffect(int attackHandIndex)
     {
-        // プレイヤーの座標を元に、正しい位置にエフェクトを生成する
-        Vector3 playerPos = transform.position;
-        var effectPos = new Vector3(playerPos.x, playerPos.y + 1.25f, playerPos.z);
-        EffectManager.Instance.PlayUpperAltEffect(_attackEffectType, effectPos, transform, handIndex);
+        EffectManager.Instance.CreateLowerSlashEffect((AttackHand)attackHandIndex);
     }
 
     /// <summary>探索範囲内でプレイヤーから最も近い位置にいる敵を探索する</summary>

@@ -1842,7 +1842,7 @@ MonoBehaviour:
   _rightSwordAttacker: {fileID: 303101264}
   _leftSwordAttacker: {fileID: 1063710937}
   _attackDuration: 0.1
-  _attackEffectType: 0
+  _enchantment: 0
   _floatEnergy: 1
   _detectionRadius: 15
   _enemyLayer:
@@ -2009,6 +2009,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b03253e064c16874baa574f4d6ccea5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _slashEffectHeightOffset: 1.25
+  _slashEffectDataList:
+  - {fileID: 11400000, guid: 67ca55cbef863a54088719f2a76fabb1, type: 2}
+  - {fileID: 11400000, guid: 716a61591df2db54d9f7ff3ed69bd0d9, type: 2}
+  - {fileID: 11400000, guid: 0d1035250bce1744d8a2c41822f61e0f, type: 2}
+  - {fileID: 11400000, guid: 70f71641dc3617f48a46ee4443537ccb, type: 2}
+  - {fileID: 11400000, guid: 53c535736de9bef4683bd83ed01f4b4f, type: 2}
+  - {fileID: 11400000, guid: 09c4f973adaae8748a2c469c81368b26, type: 2}
+  - {fileID: 11400000, guid: 0f2151e8f70fb754c8d4146d1fcb609e, type: 2}
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0
