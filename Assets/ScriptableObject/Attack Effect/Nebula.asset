@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17b763de69129e94683b9376c290f9cf, type: 3}
   m_Name: Nebula
   m_EditorClassIdentifier: 
-  _rightSlashEffect: {fileID: 7489176645323221291, guid: 71ea636a52cb09e4c918c22fa9993369, type: 3}
-  _leftSlashEffect: {fileID: 7489176645323221291, guid: f2ae9c50140c90642acf997fdce27b34, type: 3}
-  _lowerRightAltEffect: {fileID: 7489176645323221291, guid: 8ba7ee8c843df1446bd410fcfc415aef, type: 3}
-  _lowerLeftAltEffect: {fileID: 7489176645323221291, guid: 065208e75a6996c41ac31089663fa62c, type: 3}
-  _upperRightAltEffect: {fileID: 7489176645323221291, guid: 8d3f327238a4a994b9a2ea440f901bf0, type: 3}
-  _upperLeftAltEffect: {fileID: 7489176645323221291, guid: 792ac26e3c191c54aa979933becf2eac, type: 3}
+  _horizontalRightSlashEffect: {fileID: 7489176645323221291, guid: 71ea636a52cb09e4c918c22fa9993369, type: 3}
+  _horizontalLeftSlashEffect: {fileID: 7489176645323221291, guid: f2ae9c50140c90642acf997fdce27b34, type: 3}
+  _lowerRightSlashEffect: {fileID: 7489176645323221291, guid: 8ba7ee8c843df1446bd410fcfc415aef, type: 3}
+  _lowerLeftSlashEffect: {fileID: 7489176645323221291, guid: 065208e75a6996c41ac31089663fa62c, type: 3}
+  _upperRightSlashEffect: {fileID: 7489176645323221291, guid: 8d3f327238a4a994b9a2ea440f901bf0, type: 3}
+  _upperLeftSlashEffect: {fileID: 7489176645323221291, guid: 792ac26e3c191c54aa979933becf2eac, type: 3}
