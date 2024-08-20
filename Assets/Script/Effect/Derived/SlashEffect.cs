@@ -3,14 +3,8 @@ using UnityEngine;
 /// <summary>斬撃エフェクト</summary>
 public class SlashEffect : AttackEffectBase
 {
+    /// <summary>右方向のエフェクトかどうか</summary>
     [SerializeField] bool _isRightEffect = true;
-    protected override void Start()
-    {
-        // 基底クラスのStartメソッドを呼び出す
-        base.Start();
-
-        UniqueAction();
-    }
 
     /// <summary>斬撃エフェクト固有の処理</summary>
     protected override void UniqueAction()
