@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class AltEffectAttacker : MonoBehaviour, IAttacker
+public class AltEffectAttacker : MonoBehaviour
 {
     /// <summary>プレイヤーの攻撃力</summary>
     [SerializeField, Header("攻撃力")] private int _power;
@@ -13,7 +13,7 @@ public class AltEffectAttacker : MonoBehaviour, IAttacker
     private Tween _moveTween;
     
     /// <summary>特殊攻撃エフェクトの移動速度</summary>
-    private const float MOVE_SPEED = -10f;
+    private const float MOVE_SPEED = 5f;
 
     /// <summary>特殊攻撃エフェクトの移動時間</summary>
     private const float MOVE_DURATION = 1f;
@@ -25,25 +25,9 @@ public class AltEffectAttacker : MonoBehaviour, IAttacker
         set => _power = value > 0 ? value : 0;
     }
 
-    /// <summary>特殊攻撃エフェクトのコライダー</summary>
-    private BoxCollider _collider;
-
     void Start()
     {
-        _collider = GetComponent<BoxCollider>();
         MoveForwardIndefinitely();
-    }
-
-    /// <summary>コライダーを有効化する</summary>
-    public void EnableCollider()
-    {
-        _collider.enabled = true;
-    }
-
-    /// <summary>コライダーを無効化する</summary>
-    public void DisableCollider()
-    {
-        _collider.enabled = false;
     }
 
     /// <summary>他のコライダーに接触した際に呼ばれる処理</summary>
@@ -66,7 +50,7 @@ public class AltEffectAttacker : MonoBehaviour, IAttacker
     private void MoveForwardIndefinitely()
     {
         // エフェクトが存在する場合は、無制限に前方へ移動させる
-        _moveTween = transform.DOBlendableMoveBy(transform.forward * MOVE_SPEED, MOVE_DURATION)
+        _moveTween = transform.DOMove(transform.position + -transform.forward * MOVE_SPEED, MOVE_DURATION)
             .SetEase(Ease.Linear)
             .OnComplete(() => MoveForwardIndefinitely());
     }
