@@ -37,10 +37,10 @@ public class Player : MonoBehaviour
     [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 7.5f;
 
     /// <summary>右手の攻撃クラス</summary>
-    [SerializeField, Header("右手の攻撃クラス")] private SwordAttacker _rightSwordAttacker;
+    [SerializeField, Header("右手の攻撃クラス")] private SlashEffectAttacker _rightSwordAttacker;
 
     /// <summary>左手の攻撃クラス</summary>
-    [SerializeField, Header("左手の攻撃クラス")] private SwordAttacker _leftSwordAttacker;
+    [SerializeField, Header("左手の攻撃クラス")] private SlashEffectAttacker _leftSwordAttacker;
 
     /// <summary>攻撃判定の持続時間</summary>
     [SerializeField, Header("攻撃判定の持続時間")] private float _attackDuration;
@@ -48,7 +48,6 @@ public class Player : MonoBehaviour
     /// <summary>斬撃の属性</summary>
     [SerializeField, Header("攻撃の属性")] private SlashEnchantment _enchantment;
 
-    /// <summary>斬撃の属性のプロパティ</summary>
     public SlashEnchantment Enchantment => _enchantment;
 
     /// <summary>浮遊に消費されるエネルギー</summary>
@@ -405,49 +404,55 @@ public class Player : MonoBehaviour
 
     public void DisableLeftSwordCollider() => _leftSwordAttacker.DisableCollider();
 
+    /// <summary>攻撃エフェクト(斬り上げ)を生成・表示する</summary>
+    /// <param name="attackHandIndex">攻撃に使用する手を示すインデックス</param>
     private void PlayLowerSlashEffect(int attackHandIndex)
     {
         EffectManager.Instance.CreateLowerSlashEffect((AttackHand)attackHandIndex);
     }
 
+    /// <summary>攻撃エフェクト(斬り下げ)を生成・表示する</summary>
+    /// <param name="attackHandIndex">攻撃に使用する手を示すインデックス</param>
     private void PlayUpperSlashEffect(int attackHandIndex)
     {
-        EffectManager.Instance.CreateLowerSlashEffect((AttackHand)attackHandIndex);
+        EffectManager.Instance.CreateUpperSlashEffect((AttackHand)attackHandIndex);
     }
 
+    /// <summary>攻撃エフェクト(水平)を生成・表示する</summary>
+    /// <param name="attackHandIndex">攻撃に使用する手を示すインデックス</param>
     private void PlayHorizontalSlashEffect(int attackHandIndex)
     {
-        EffectManager.Instance.CreateLowerSlashEffect((AttackHand)attackHandIndex);
+        EffectManager.Instance.CreateHorizontalSlashEffect((AttackHand)attackHandIndex);
     }
 
-    /// <summary>探索範囲内でプレイヤーから最も近い位置にいる敵を探索する</summary>
+    /// <summary>探索範囲内でプレイヤーから最も近い敵の位置を返す</summary>
     /// <returns>最も近い敵の位置</returns>
-    private Transform FindClosestEnemy()
+    private Transform FindClosestEnemyPos()
     {
         // プレイヤーの位置を中心に、指定された半径内にいる全ての敵を取得する
         Collider[] enemyColliders = Physics.OverlapSphere(transform.position, _detectionRadius, _enemyLayer);
-        Transform closestEnemy = null;
+        Transform closestEnemyPos = null;
         float closestDistanceSqr = Mathf.Infinity;
 
-        foreach (var enemy in enemyColliders)
+        foreach (var enemyCollider in enemyColliders)
         {
             // プレイヤーと敵の位置の差を計算し、距離の平方を求める
-            var distanceSqr = (enemy.transform.position - transform.position).sqrMagnitude;
+            var distanceSqr = (enemyCollider.transform.position - transform.position).sqrMagnitude;
 
             // 現在の最短距離と比較して、より近い敵が見つかった場合、最短距離と最も近い敵を更新する
             if (distanceSqr < closestDistanceSqr)
             {
-                closestEnemy = enemy.transform;
+                closestEnemyPos = enemyCollider.transform;
                 closestDistanceSqr = distanceSqr;
             }
         }
 
-        // 最も近い敵が見つかった場合、その敵のTransformを返す。
-        if (closestEnemy != null)
+        // 最も近い敵の位置を返す
+        if (closestEnemyPos != null)
         {
-            return closestEnemy;
+            return closestEnemyPos;
         }
-        // 見つからなかった場合、ログを出力してnullを返す。
+        // 探索範囲内に敵がいなかった場合は、ログを出力してnullを返す
         else
         {
             Debug.Log("No enemy found in detection range.");
@@ -459,7 +464,7 @@ public class Player : MonoBehaviour
     private void LookAtClosestEnemy(bool isNormalAttack)
     {
         // 最も近い敵の位置を取得する
-        Transform closestEnemyPos = FindClosestEnemy();
+        Transform closestEnemyPos = FindClosestEnemyPos();
 
         // 最も近い敵が見つからなかった場合、ログを出力して処理を抜ける
         if (closestEnemyPos == null)
@@ -554,14 +559,8 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>プレイヤーのY座標を固定する</summary>
-    private void FreezeYAxis()
-    {
-        _brain.SetFreezeAxis(false, true, false);
-    }
+    private void FreezeYAxis() => _brain.SetFreezeAxis(false, true, false);
 
     /// <summary>重力を無効化する</summary>
-    private void DisableGravity()
-    {
-        _gravity.enabled = false;
-    }
+    private void DisableGravity() => _gravity.enabled = false;
 }
