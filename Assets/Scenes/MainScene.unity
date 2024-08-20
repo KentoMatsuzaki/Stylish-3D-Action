@@ -1842,7 +1842,7 @@ MonoBehaviour:
   _rightSwordAttacker: {fileID: 303101264}
   _leftSwordAttacker: {fileID: 1063710937}
   _attackDuration: 0.1
-  _enchantment: 0
+  _enchantment: 1
   _floatEnergy: 1
   _detectionRadius: 15
   _enemyLayer:
