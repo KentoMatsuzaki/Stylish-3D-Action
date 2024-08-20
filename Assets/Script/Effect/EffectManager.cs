@@ -20,7 +20,7 @@ public class EffectManager : Singleton<EffectManager>
     {
         var effects = GetSlashEffect(SlashType.Horizontal, hand);
 
-        effects.ForEach(effect => CreateEffect(effect, GetAttackEffectPosition()));
+        effects.ForEach(effect => CreateEffect(effect, GetSlashEffectPosition()));
     }
 
     /// <summary>斬り上げの斬撃エフェクトを生成する共通メソッド</summary>
@@ -28,7 +28,7 @@ public class EffectManager : Singleton<EffectManager>
     {
         var effects = GetSlashEffect(SlashType.Lower, hand);
 
-        effects.ForEach(effect => CreateEffect(effect, GetAttackEffectPosition()));
+        effects.ForEach(effect => CreateEffect(effect, GetSlashEffectPosition()));
     }
 
     /// <summary>斬り下げの斬撃エフェクトを生成する共通メソッド</summary>
@@ -36,7 +36,7 @@ public class EffectManager : Singleton<EffectManager>
     {
         var effects = GetSlashEffect(SlashType.Upper, hand);
 
-        effects.ForEach(effect => CreateEffect(effect, GetAttackEffectPosition()));
+        effects.ForEach(effect => CreateEffect(effect, GetSlashEffectPosition()));
     }
 
     //-------------------------------------------------------------------------------
@@ -51,8 +51,8 @@ public class EffectManager : Singleton<EffectManager>
         Instantiate(effectPrefab, position, Quaternion.identity, transform);
     }
 
-    /// <summary>攻撃エフェクトを生成する位置を求める</summary>
-    private Vector3 GetAttackEffectPosition()
+    /// <summary>斬撃エフェクトを生成する位置を求める</summary>
+    private Vector3 GetSlashEffectPosition()
     {
         // プレイヤーの位置にオフセットを加えた位置を求めて返す
         Vector3 playerPos = Player.Instance.transform.position;
@@ -91,7 +91,7 @@ public class EffectManager : Singleton<EffectManager>
         return effects;
     }
 
-    /// <summary>右手による斬撃かどうか</summary>
+    /// <summary>右手による斬撃である場合にtrueを返す</summary>
     /// <returns>true = 右手・両手，false = 左手</returns>
     private bool IsRightHandSlash(AttackHand hand)
     {
@@ -99,7 +99,7 @@ public class EffectManager : Singleton<EffectManager>
         else return false;
     }
 
-    /// <summary>左手による斬撃かどうか</summary>
+    /// <summary>左手による斬撃である場合にtrueを返す</summary>
     /// <returns>true = 左手・両手, false = 右手</returns>
     private bool IsLeftHandSlash(AttackHand hand)
     {
