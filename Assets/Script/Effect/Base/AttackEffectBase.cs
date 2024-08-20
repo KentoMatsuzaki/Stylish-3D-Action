@@ -7,6 +7,8 @@ public abstract class AttackEffectBase : MonoBehaviour
     {
         // プレイヤーの正面方向へ回転させる
         transform.rotation = Quaternion.LookRotation(-Player.Instance.transform.forward);
+
+        UniqueAction();
     }
 
     /// <summary>派生クラスでオーバーライドする抽象メソッド</summary>
