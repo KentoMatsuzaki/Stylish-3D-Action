@@ -3141,8 +3141,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b064dbdb804e74418a1703c85dba15c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _patrolRadius: 7.5
-  _patrolSpeed: 1
+  _patrolSettings: {fileID: 11400000, guid: 79bdc6b9d7474374c8bab8b5490a37fe, type: 2}
+  _chaseSettings: {fileID: 11400000, guid: 45b9b6fce5d1fd94a93dc57f02feea2d, type: 2}
 --- !u!4 &8388172545169041247
 Transform:
   m_ObjectHideFlags: 0
