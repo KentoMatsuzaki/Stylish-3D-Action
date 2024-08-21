@@ -1844,7 +1844,7 @@ MonoBehaviour:
   _attackDuration: 0.1
   _enchantment: 4
   _floatEnergy: 1
-  _detectionRadius: 15
+  _detectionRadius: 5
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 8

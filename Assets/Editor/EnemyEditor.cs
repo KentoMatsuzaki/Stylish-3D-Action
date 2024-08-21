@@ -14,6 +14,6 @@ public class EnemyEditor : Editor
 
         // ギズモの色を設定して、感知範囲の円を描画
         Handles.color = Color.yellow;
-        Handles.DrawWireDisc(robot.transform.position, Vector3.up, robot.DetectionRange);
+        Handles.DrawWireDisc(robot.transform.position, Vector3.up, robot.PlayerDetectionRange);
     }
 }
