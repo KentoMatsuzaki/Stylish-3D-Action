@@ -40,7 +40,7 @@ public class Robot : MonoBehaviour
         // 初期化アニメーションの再生が終了していない場合は、処理を抜ける
         if (!_isInitialized) return;
 
-        if (IsPlayerDetected())
+        if (HasPlayerDetected())
         {
             Chase();
         }
@@ -65,27 +65,28 @@ public class Robot : MonoBehaviour
     // 条件ノード
     //-------------------------------------------------------------------------------
 
-    /// <summary>プレイヤーを感知しているか</summary>
-    /// <returns>プレイヤーが感知範囲内にいる場合はtrue、そうでない場合はfalse</returns>
-    private bool IsPlayerDetected()
+    /// <summary>プレイヤーを感知しているかどうかを返す</summary>
+    private bool HasPlayerDetected()
     {
-        // プレイヤーのインスタンスが存在しない場合
-        if (Player.Instance == null)
-        {
-            // エラーログを出力してfalseを返す
-            Debug.LogError("No Instance of Player Exists.");
-            return false;
-        }
+        return GetHorizontalDistanceToPlayer() < _chaseSettings._playerDetectionRange;
+    }
 
-        // プレイヤーと自身の位置を取得する
+    //-------------------------------------------------------------------------------
+    // 条件ノードに関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>Y座標を無視したプレイヤーとの距離を求める</summary>
+    private float GetHorizontalDistanceToPlayer()
+    {
+        // プレイヤーの位置を取得する
         Vector3 playerPos = Player.Instance.transform.position;
+
+        // 自身の位置を取得する
         Vector3 currentPos = transform.position;
 
-        // Y座標を無視してプレイヤーとの距離を求め、感知距離よりも短い場合はtrueを返す
-        float distance = Vector3.Distance(new Vector3(currentPos.x, 0, currentPos.z),
-            new Vector3(playerPos.x, 0, playerPos.z));
-
-        return distance < _chaseSettings._playerDetectionRange;
+        // Y座標を無視した距離を求めて返す
+        return Vector3.Distance(new Vector3(playerPos.x, 0, playerPos.z), 
+            new Vector3(currentPos.x, 0, currentPos.z));
     }
 
     //-------------------------------------------------------------------------------
@@ -308,16 +309,20 @@ public class Robot : MonoBehaviour
         return GetDistanceToPlayer() < _chaseSettings._chaseArrivalThreshold;
     }
 
-    /// <summary>プレイヤーへの回転を求める</summary>
-    private Quaternion GetRotationToPlayer()
+    /// <summary>Y座標を無視したプレイヤーへの回転を求める</summary>
+    private Quaternion GetHorizontalRotationToPlayer()
     {
-        return GetRotationToPosition(Player.Instance.transform.position);
+        // Y座標を無視したプレイヤーの位置を取得する
+        Vector3 playerPos = Player.Instance.transform.position;
+        Vector3 fixedPlayerPos = new Vector3(playerPos.x, 0, playerPos.z);
+
+        return GetRotationToPosition(fixedPlayerPos);
     }
 
     /// <summary>プレイヤーの方向へ回転させる</summary>
     private void RotateTowardsPlayer()
     {
-        transform.rotation = Quaternion.Slerp(transform.rotation, GetRotationToPlayer(), 
+        transform.rotation = Quaternion.Slerp(transform.rotation, GetHorizontalRotationToPlayer(), 
             _chaseSettings._chaseRotationSLerpSpeed * Time.deltaTime);
     }
 }
