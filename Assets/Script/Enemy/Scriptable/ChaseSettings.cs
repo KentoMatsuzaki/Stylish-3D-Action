@@ -10,7 +10,7 @@ public class ChaseSettings : ScriptableObject
     [Header("’ÇÕ‚ÌˆÚ“®‘¬“x")] public float _chaseSpeed = 1f;
 
     /// <summary>’ÇÕ‚·‚éÛ‚Ì‰ñ“]•âŠ®‚ÌƒXƒs[ƒhŒW”</summary>
-    [Header("’ÇÕ‚Ì‰ñ“]•âŠ®ŒW”")] public float _chaseRotationDuration = 3f;
+    [Header("’ÇÕ‚Ì‰ñ“]•âŠ®ŒW”")] public float _chaseRotationSLerpSpeed = 3f;
 
     /// <summary>’ÇÕ‘ÎÛ‚ğŠ´’m‚·‚é‹——£</summary>
     [Header("’ÇÕ‘ÎÛ‚ğŠ´’m‚·‚é‹——£")] public float _playerDetectionRange = 5f;
