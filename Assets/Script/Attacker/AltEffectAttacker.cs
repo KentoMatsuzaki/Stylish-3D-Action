@@ -13,7 +13,7 @@ public class AltEffectAttacker : MonoBehaviour
     private Tween _moveTween;
     
     /// <summary>特殊攻撃エフェクトの移動速度</summary>
-    private const float MOVE_SPEED = 5f;
+    private const float MOVE_SPEED = 7.5f;
 
     /// <summary>特殊攻撃エフェクトの移動時間</summary>
     private const float MOVE_DURATION = 1f;
