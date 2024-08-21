@@ -16,7 +16,7 @@ public class Robot : MonoBehaviour
     CharacterController _controller;
 
     /// <summary>巡回する目標地点</summary>
-    Vector3? _patrolDestination;
+    Vector3? _patrolPoint;
 
     /// <summary>レイキャストを飛ばす位置のY座標のオフセット</summary>
     private const float RAYCAST_Y_OFFSET = 0.75f;
@@ -92,18 +92,18 @@ public class Robot : MonoBehaviour
     // 巡回
     //-------------------------------------------------------------------------------
 
-    /// <summary>目標地点を巡回させる</summary>
+    /// <summary>目的地を巡回する<summary>
     /// <returns>巡回アクションノードの評価結果</returns>
     private NodeStatus Patrol()
     {
         // 目標地点が存在する場合
-        if (_patrolDestination.HasValue)
+        if (_patrolPoint.HasValue)
         {
             // 目標地点に到達した場合
-            if (IsArrivedAtPatrolDestination())
+            if (HasReachedPatrolDestination())
             {
                 // 目標地点をクリアして、成功の評価結果を返す
-                _patrolDestination = null;
+                _patrolPoint = null;
                 return NodeStatus.Success;
             }
             // 目標地点に到達していない場合
@@ -138,10 +138,10 @@ public class Robot : MonoBehaviour
     // 巡回に関する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>巡回する目標地点に到達しているかどうか</summary>
-    private bool IsArrivedAtPatrolDestination()
+    /// <summary>巡回する目標地点へ到達しているかどうか</summary>
+    private bool HasReachedPatrolDestination()
     {
-        return Vector3.Distance(transform.position, _patrolDestination.Value)
+        return Vector3.Distance(transform.position, _patrolPoint.Value)
             < _patrolSettings._patrolArrivalThreshold ? true : false;
     }
 
@@ -175,7 +175,7 @@ public class Robot : MonoBehaviour
         while (rotationAngle < _patrolSettings._minRotationAngle);
 
         // 目的地をランダムな地点に設定する
-        _patrolDestination = randomPos;
+        _patrolPoint = randomPos;
     }
 
     /// <summary>前方に移動させる</summary>
@@ -188,10 +188,10 @@ public class Robot : MonoBehaviour
     IEnumerator RotateTowardsDestination()
     {
         // 目標地点が存在する場合
-        if (_patrolDestination.HasValue)
+        if (_patrolPoint.HasValue)
         {
             // 目標地点への方向を求める
-            var dir = (_patrolDestination.Value - transform.position).normalized;
+            var dir = (_patrolPoint.Value - transform.position).normalized;
 
             // 求めた方向を基に、目標地点への回転方向を求める
             Quaternion lookRotation = Quaternion.LookRotation(dir);
@@ -251,7 +251,7 @@ public class Robot : MonoBehaviour
         if (IsCollided())
         {
             // 目標地点をクリアする
-            _patrolDestination = null;
+            _patrolPoint = null;
         }
     }
 
@@ -275,31 +275,59 @@ public class Robot : MonoBehaviour
     // 追跡
     //-------------------------------------------------------------------------------
 
-    /// <summary>プレイヤーを追跡する</summary>
+    /// <summary>対象（プレイヤー）を追跡する</summary>
     /// <returns>追跡アクションノードの評価結果</returns>
     private NodeStatus Chase()
     {
-        _patrolDestination = null;
+        // 巡回目標をクリアする
+        _patrolPoint = null;
 
-        // プレイヤーとの距離を求める
-        float distanceToPlayer = Vector3.Distance(transform.position, Player.Instance.transform.position);
-
-        // プレイヤーとの距離が追跡を停止する閾値よりも短い場合、成功の評価結果を返す
-        if (distanceToPlayer < _chaseSettings._chaseArrivalThreshold)
-        {
-            return NodeStatus.Success;
-        }
-
-        // プレイヤーへの方向を求める
-        Vector3 directionToPlayer = (Player.Instance.transform.position - transform.position).normalized;
+        // 追跡対象の元に到達した場合、成功の評価結果を返す
+        if (HasReachedChaseTarget()) return NodeStatus.Success;
 
         // プレイヤーの方へ回転させる
-        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _chaseSettings._chaseRotationDuration * Time.deltaTime);
+        RotateTowardsPlayer();
 
         // プレイヤーの方へ移動させる
         _controller.Move(transform.forward * _chaseSettings._chaseSpeed * Time.deltaTime);
 
+        // 実行中の評価結果を返す
         return NodeStatus.Running;
+    }
+
+    //-------------------------------------------------------------------------------
+    // 追跡に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>プレイヤーとの距離を求める</summary>
+    private float GetDistanceToPlayer()
+    {
+        return Vector3.Distance(transform.position, Player.Instance.transform.position);
+    }
+
+    /// <summary>追跡対象の元へ到達したかどうかを返す</summary>
+    /// <returns>true = 追跡対象との距離＜到達閾値，false = 追跡対象との距離＞＝到達閾値</returns>
+    private bool HasReachedChaseTarget()
+    {
+        return GetDistanceToPlayer() < _chaseSettings._chaseArrivalThreshold;
+    }
+
+    /// <summary>プレイヤーへの方向を求める</summary>
+    private Vector3 GetDirectionToPlayer()
+    {
+        return (Player.Instance.transform.position - transform.position).normalized;
+    }
+
+    /// <summary>プレイヤーへの回転を求める</summary>
+    private Quaternion GetRotationToPlayer()
+    {
+        return Quaternion.LookRotation(GetDirectionToPlayer());
+    }
+
+    /// <summary>プレイヤーの方向へ回転させる</summary>
+    private void RotateTowardsPlayer()
+    {
+        transform.rotation = Quaternion.Slerp(transform.rotation, GetRotationToPlayer(), 
+            _chaseSettings._chaseRotationSLerpSpeed);
     }
 }
