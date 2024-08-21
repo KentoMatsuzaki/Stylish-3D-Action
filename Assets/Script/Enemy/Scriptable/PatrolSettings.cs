@@ -12,8 +12,8 @@ public class PatrolSettings : ScriptableObject
     /// <summary>巡回する際の回転に要する時間</summary>
     [Header("巡回時の回転時間")] public float _patrolRotationDuration = 1.5f;
 
-    /// <summary>巡回する目標地点を求める際の球の半径</summary>
-    [Header("巡回範囲の半径")] public float _patrolRadius = 5f;
+    /// <summary>巡回する際の範囲</summary>
+    [Header("巡回範囲")] public float _patrolRange = 5f;
 
     /// <summary>巡回目標に到達したかを判定する閾値</summary>
     [Header("巡回目標への到達閾値")] public float _patrolArrivalThreshold = 0.5f;
