@@ -15,14 +15,14 @@ public class Robot : MonoBehaviour
     /// <summary>キャラクターコントローラー</summary>
     CharacterController _controller;
 
-    /// <summary>巡回する目標地点</summary>
-    Vector3? _patrolPoint;
+    /// <summary>巡回する目的地</summary>
+    Vector3? _patrolDestination;
 
     /// <summary>レイキャストを飛ばす位置のY座標のオフセット</summary>
     private const float RAYCAST_Y_OFFSET = 0.75f;
 
-    /// <summary>巡回目標へ回転中であるかを示すフラグ</summary>
-    private bool _isRotating = false;
+    /// <summary>巡回する目的地へ回転中であるかを示すフラグ</summary>
+    private bool _isRotatingTowardsPatrolDestination = false;
 
     /// <summary>初期化アニメーションの完了を示すフラグ</summary>
     private bool _isInitialized = false;
@@ -96,38 +96,35 @@ public class Robot : MonoBehaviour
     /// <returns>巡回アクションノードの評価結果</returns>
     private NodeStatus Patrol()
     {
-        // 目標地点が存在する場合
-        if (_patrolPoint.HasValue)
+        // 目的地が存在する場合
+        if (_patrolDestination.HasValue)
         {
-            // 目標地点に到達した場合
+            // 目的地に到達した場合
             if (HasReachedPatrolDestination())
             {
-                // 目標地点をクリアして、成功の評価結果を返す
-                _patrolPoint = null;
+                // 目的地をクリアして、成功の評価結果を返す
+                ClearPatrolDestination();
                 return NodeStatus.Success;
             }
-            // 目標地点に到達していない場合
-            else
-            {
-                // 目標地点の方向へ回転中でない場合
-                if (!_isRotating)
-                {
-                    // 衝突判定をチェックし、目標地点をクリアする
-                    CheckCollisionThenClearDestination();
 
-                    // 前方へ移動させる
-                    MoveForward();
-                }
+            // 目的地へ回転している途中でない場合
+            if (!_isRotatingTowardsPatrolDestination)
+            {
+                // 前方に障害物が存在する場合、目的地をクリアする
+                if (HasObstacleInFront()) ClearPatrolDestination();
+
+                // 前方へ移動させる
+                MoveForward();
             }
         }
-        // 目標地点が存在しない場合
+        // 目的地が存在しない場合
         else
         {
-            // ランダムな目標地点を設定する
-            SetRandomDestination();
+            // ランダムな目的地を割り当てる
+            AssignRandomPatrolDestination();
 
-            // 目標地点の方向へ回転させる
-            StartCoroutine(RotateTowardsDestination());
+            // 目的地の方向へ回転させる
+            StartCoroutine(RotateTowardsPatrolDestination());
         }
 
         // 実行中の評価結果を返す
@@ -137,45 +134,33 @@ public class Robot : MonoBehaviour
     //-------------------------------------------------------------------------------
     // 巡回に関する処理
     //-------------------------------------------------------------------------------
-
-    /// <summary>巡回する目標地点へ到達しているかどうか</summary>
-    private bool HasReachedPatrolDestination()
+    
+    /// <summary>巡回する目的地との距離を求める</summary>
+    private float GetDistanceToPatrolDestination()
     {
-        return Vector3.Distance(transform.position, _patrolPoint.Value)
-            < _patrolSettings._patrolArrivalThreshold ? true : false;
+        return Vector3.Distance(transform.position, _patrolDestination.Value);
     }
 
-    /// <summary>巡回する目標地点をランダムに設定する</summary>
-    private void SetRandomDestination()
+    /// <summary>巡回する目的地へ到達したかどうかを返す</summary>
+    private bool HasReachedPatrolDestination()
     {
-        // 目標地点への回転角度
-        float rotationAngle;
+        return GetDistanceToPatrolDestination() < _patrolSettings._patrolArrivalThreshold;
+    }
 
-        // ランダムな地点
-        Vector3 randomPos;
+    /// <summary>巡回する目的地をクリアする</summary>
+    private void ClearPatrolDestination()
+    {
+        _patrolDestination = null;
+    }
 
-        do
-        {
-            // 巡回範囲を半径とする球内の、ランダムな地点を取得する
-            randomPos = Random.insideUnitSphere * _patrolSettings._patrolRadius;
+    /// <summary>前方に障害物が存在するかどうかを返す</summary>
+    private bool HasObstacleInFront()
+    {
+        // レイキャストを飛ばす位置を取得
+        Vector3 raycastPos = new Vector3(transform.position.x, RAYCAST_Y_OFFSET, transform.position.z);
 
-            // ランダムな地点のY座標を0に設定する
-            randomPos.y = 0;
-
-            // ランダムな地点は原点を中心としているため、キャラクターの位置を加算する
-            randomPos += transform.position;
-
-            // ランダムな地点への方向を求める
-            Vector3 directionToRandomPos = (randomPos - transform.position).normalized;
-
-            // 現在の方向(ロボットの前方)とランダムな地点への方向との間の角度を求める
-            rotationAngle = Vector3.Angle(transform.forward, directionToRandomPos);
-        }
-        // 回転距離が最小回転角度を上回るまで繰り返す
-        while (rotationAngle < _patrolSettings._minRotationAngle);
-
-        // 目的地をランダムな地点に設定する
-        _patrolPoint = randomPos;
+        // レイキャストを前方に飛ばし、衝突の有無を返す
+        return Physics.Raycast(raycastPos, transform.forward, _patrolSettings._raycastDistance);
     }
 
     /// <summary>前方に移動させる</summary>
@@ -184,75 +169,87 @@ public class Robot : MonoBehaviour
         _controller.Move(transform.forward * _patrolSettings._patrolSpeed * Time.deltaTime);
     }
 
+    /// <summary>巡回する目的地をランダムに割り当てる</summary>
+    private void AssignRandomPatrolDestination()
+    {
+        Vector3 randomPos;
+
+        // ランダムな地点を取得する
+        do randomPos = GetRandomPositionInsidePatrolRange();
+
+        // ランダムな地点への回転角度が最小回転角度を上回るまで繰り返す
+        while (!IsValidRotationAngle(randomPos));
+
+        // ランダムな地点を目的地に設定する
+        _patrolDestination = randomPos;
+    }
+
+    /// <summary>巡回範囲内にあるランダムな地点を取得する</summary>
+    private Vector3 GetRandomPositionInsidePatrolRange()
+    {
+        // 巡回範囲を半径とする円内にあるランダムな地点を取得する
+        Vector3 randomPos = Random.insideUnitSphere * _patrolSettings._patrolRange;
+
+        // ランダムな地点のY座標を0にする
+        randomPos.y = 0;
+
+        // ランダムな地点は原点を中心としているため、自身の位置を加算する
+        return randomPos + transform.position;
+    }
+
+    /// <summary>引数で指定した地点への方向を求める</summary>
+    private Vector3 GetDirectionToPosition(Vector3 position)
+    {
+        return (position - transform.position).normalized;
+    }
+
+    /// <summary>引数で指定した地点への回転角度を求める</summary>
+    private float GetRotationAngleToPosition(Vector3 position)
+    {
+        return Vector3.Angle(transform.forward, GetDirectionToPosition(position));
+    }
+
+    /// <summary>引数で指定した地点への回転角度が最小回転角度を上回るかどうかを返す</summary>
+    private bool IsValidRotationAngle(Vector3 position)
+    {
+        return GetRotationAngleToPosition(position) > _patrolSettings._minRotationAngle;
+    }
+
     /// <summary>目標地点の方向へ回転させるコルーチン</summary>
-    IEnumerator RotateTowardsDestination()
+    IEnumerator RotateTowardsPatrolDestination()
     {
         // 目標地点が存在する場合
-        if (_patrolPoint.HasValue)
+        if (_patrolDestination.HasValue)
         {
-            // 目標地点への方向を求める
-            var dir = (_patrolPoint.Value - transform.position).normalized;
+            // 目的地への回転を行うフラグをオンにする
+            _isRotatingTowardsPatrolDestination = true;
 
-            // 求めた方向を基に、目標地点への回転方向を求める
-            Quaternion lookRotation = Quaternion.LookRotation(dir);
+            // 目的地への回転を求める
+            Quaternion rotation = GetRotationToPosition(_patrolDestination.Value);
 
-            // 目標地点へ回転中であることを示すフラグをオンにする
-            _isRotating = true;
-
-            // 目標地点の方向へ回転させる
-            Tween rotationTween = transform.DORotate(lookRotation.eulerAngles, _patrolSettings._patrolRotationDuration);
+            // 目的地の方向へ回転させる
+            Tween rotationTween = transform.DORotate(rotation.eulerAngles, _patrolSettings._patrolRotationDuration);
 
             // 回転の完了を待機する
             yield return rotationTween.WaitForCompletion();
 
-            // 目標地点へ回転中であることを示すフラグをオフにする
-            _isRotating = false;
+            // 回転が完了した後にフラグをオフにする
+            _isRotatingTowardsPatrolDestination = false;
+            
         }
         // 目標地点が存在しない場合
         else
         {
-            // エラーログを出力して処理を抜ける
+            // エラーログを出力する
             Debug.LogError("Destination not Set.");
             yield break;
         }
     }
 
-    /// <summary>衝突判定を行う</summary>
-    /// <returns>true = 衝突が発生した、　false = 衝突が発生しなかった</returns>
-    private bool IsCollided()
+    /// <summary>引数で指定した地点への回転を求める</summary>
+    private Quaternion GetRotationToPosition(Vector3 position)
     {
-        // レイキャストの衝突情報を格納する変数
-        RaycastHit hit;
-
-        // キャラクターの現在の位置を取得
-        Vector3 currentPos = transform.position;
-
-        // レイキャストを飛ばす位置を設定
-        Vector3 raycastPos = new Vector3(currentPos.x, RAYCAST_Y_OFFSET, currentPos.z);
-
-        // レイキャストを前方に飛ばし、衝突が発生した場合はtrueを返す
-        if (Physics.Raycast(raycastPos, transform.forward, out hit, _patrolSettings._raycastDistance))
-        {
-            // 接触したオブジェクトが存在する場合
-            if (hit.collider)
-            {
-                return true;
-            }
-        }
-
-        // 衝突が発生しなかった場合はfalseを返す
-        return false;
-    }
-
-    /// <summary>衝突判定をチェックし、目標地点をクリアする</summary>
-    private void CheckCollisionThenClearDestination()
-    {
-        // 衝突が発生している場合
-        if (IsCollided())
-        {
-            // 目標地点をクリアする
-            _patrolPoint = null;
-        }
+        return Quaternion.LookRotation(GetDirectionToPosition(position));
     }
 
     /// <summary>レイキャストを可視化させる</summary>
@@ -280,7 +277,7 @@ public class Robot : MonoBehaviour
     private NodeStatus Chase()
     {
         // 巡回目標をクリアする
-        _patrolPoint = null;
+        _patrolDestination = null;
 
         // 追跡対象の元に到達した場合、成功の評価結果を返す
         if (HasReachedChaseTarget()) return NodeStatus.Success;
@@ -288,7 +285,7 @@ public class Robot : MonoBehaviour
         // プレイヤーの方へ回転させる
         RotateTowardsPlayer();
 
-        // プレイヤーの方へ移動させる
+        // プレイヤーの方向へ移動させる
         _controller.Move(transform.forward * _chaseSettings._chaseSpeed * Time.deltaTime);
 
         // 実行中の評価結果を返す
@@ -306,28 +303,21 @@ public class Robot : MonoBehaviour
     }
 
     /// <summary>追跡対象の元へ到達したかどうかを返す</summary>
-    /// <returns>true = 追跡対象との距離＜到達閾値，false = 追跡対象との距離＞＝到達閾値</returns>
     private bool HasReachedChaseTarget()
     {
         return GetDistanceToPlayer() < _chaseSettings._chaseArrivalThreshold;
     }
 
-    /// <summary>プレイヤーへの方向を求める</summary>
-    private Vector3 GetDirectionToPlayer()
-    {
-        return (Player.Instance.transform.position - transform.position).normalized;
-    }
-
     /// <summary>プレイヤーへの回転を求める</summary>
     private Quaternion GetRotationToPlayer()
     {
-        return Quaternion.LookRotation(GetDirectionToPlayer());
+        return GetRotationToPosition(Player.Instance.transform.position);
     }
 
     /// <summary>プレイヤーの方向へ回転させる</summary>
     private void RotateTowardsPlayer()
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, GetRotationToPlayer(), 
-            _chaseSettings._chaseRotationSLerpSpeed);
+            _chaseSettings._chaseRotationSLerpSpeed * Time.deltaTime);
     }
 }
