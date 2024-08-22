@@ -29,6 +29,12 @@ public class Robot : MonoBehaviour
 
     public float PlayerDetectionRange => _chaseSettings._playerDetectionRange;
 
+    /// <summary>攻撃アニメーションのトリガー名</summary>
+    public const string ATTACK_TRIGGER = "Attack";
+
+    /// <summary>攻撃実行フラグ</summary>
+    public bool _isAttacking = false;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -39,6 +45,8 @@ public class Robot : MonoBehaviour
     {
         // 初期化アニメーションの再生が終了していない場合は、処理を抜ける
         if (!_isInitialized) return;
+
+        if (_isAttacking) return;
 
         if (HasPlayerDetected())
         {
@@ -273,7 +281,7 @@ public class Robot : MonoBehaviour
     // 追跡
     //-------------------------------------------------------------------------------
 
-    /// <summary>対象（プレイヤー）を追跡する</summary>
+    /// <summary>プレイヤーを追跡する</summary>
     /// <returns>追跡アクションノードの評価結果</returns>
     private NodeStatus Chase()
     {
@@ -324,5 +332,35 @@ public class Robot : MonoBehaviour
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, GetHorizontalRotationToPlayer(), 
             _chaseSettings._chaseRotationSLerpSpeed * Time.deltaTime);
+    }
+
+    //-------------------------------------------------------------------------------
+    // 攻撃
+    //-------------------------------------------------------------------------------
+
+    /// <summary>プレイヤーを攻撃する</summary>
+    /// <returns>攻撃アクションノードの評価結果</returns>
+    private NodeStatus Attack()
+    {
+        // 攻撃フラグをオンにする
+        _isAttacking = true;
+
+        // 攻撃トリガーをオンにする
+        _animator.SetTrigger(ATTACK_TRIGGER);
+
+        // 攻撃が一度だけ実行されることが保証されているため、成功の評価結果を返す
+        return NodeStatus.Success;
+    }
+
+    //-------------------------------------------------------------------------------
+    // 攻撃に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>攻撃アニメーションの再生を完了した際に呼ばれるコールバックイベント</summary>
+    /// <summary>攻撃アニメーションイベントから呼ばれる</summary>
+    public void OnCompleteAttack()
+    {
+        // 攻撃フラグをオフにする
+        _isAttacking = false;
     }
 }
