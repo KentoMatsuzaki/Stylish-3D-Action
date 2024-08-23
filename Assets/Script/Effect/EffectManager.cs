@@ -117,9 +117,9 @@ public class EffectManager : Singleton<EffectManager>
     /// <summary>敵の攻撃エフェクトを生成する</summary>
     /// <param name="effectIndex">攻撃エフェクトのインデックス</param>
     /// <param name="position">攻撃エフェクトの生成位置</param>
-    public void CreateEnemyAttackEffect(int effectIndex, Vector3 position)
+    public GameObject CreateEnemyAttackEffect(int effectIndex, Vector3 position)
     {
-        CreateEffect(GetEnemyAttackEffect(effectIndex), position);
+        return Instantiate(GetEnemyAttackEffect(effectIndex), position, Quaternion.identity, transform);
     }
 
     //-------------------------------------------------------------------------------
