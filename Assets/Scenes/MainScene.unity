@@ -2018,6 +2018,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 53c535736de9bef4683bd83ed01f4b4f, type: 2}
   - {fileID: 11400000, guid: 09c4f973adaae8748a2c469c81368b26, type: 2}
   - {fileID: 11400000, guid: 0f2151e8f70fb754c8d4146d1fcb609e, type: 2}
+  _enemyAttackEffectList:
+  - {fileID: 5436408572569499155, guid: be0151960bc995a4788e04ddd8044a91, type: 3}
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0
@@ -3143,7 +3145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _patrolSettings: {fileID: 11400000, guid: 79bdc6b9d7474374c8bab8b5490a37fe, type: 2}
   _chaseSettings: {fileID: 11400000, guid: 45b9b6fce5d1fd94a93dc57f02feea2d, type: 2}
-  _isAttacking: 0
+  _attackSettings: {fileID: 11400000, guid: e171e929d6640ae4ab4b15e70043b06a, type: 2}
 --- !u!4 &8388172545169041247
 Transform:
   m_ObjectHideFlags: 0
