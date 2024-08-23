@@ -35,6 +35,9 @@ public class Robot : MonoBehaviour
     /// <summary>攻撃実行フラグ</summary>
     public bool _isAttacking = false;
 
+    /// <summary>攻撃エフェクトの生成位置のY座標オフセット</summary>
+    public float _attackEffectPositionOffsetY;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -48,14 +51,15 @@ public class Robot : MonoBehaviour
 
         if (_isAttacking) return;
 
-        if (HasPlayerDetected())
-        {
-            Chase();
-        }
-        else
-        {
-            Patrol();
-        }
+        //if (HasPlayerDetected())
+        //{
+        //    Chase();
+        //}
+        //else
+        //{
+        //    Patrol();
+        //}
+        Attack();
     }
 
     //-------------------------------------------------------------------------------
@@ -285,8 +289,8 @@ public class Robot : MonoBehaviour
     /// <returns>追跡アクションノードの評価結果</returns>
     private NodeStatus Chase()
     {
-        // 巡回目標をクリアする
-        _patrolDestination = null;
+        // 巡回目的地をクリアする
+        ClearPatrolDestination();
 
         // 追跡対象の元に到達した場合、成功の評価結果を返す
         if (HasReachedChaseTarget()) return NodeStatus.Success;
@@ -331,7 +335,7 @@ public class Robot : MonoBehaviour
     private void RotateTowardsPlayer()
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, GetHorizontalRotationToPlayer(), 
-            _chaseSettings._chaseRotationSLerpSpeed * Time.deltaTime);
+            _chaseSettings._chaseRotationSlerpSpeed * Time.deltaTime);
     }
 
     //-------------------------------------------------------------------------------
@@ -356,11 +360,26 @@ public class Robot : MonoBehaviour
     // 攻撃に関する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>攻撃アニメーションの再生を完了した際に呼ばれるコールバックイベント</summary>
+    /// <summary>攻撃アニメーションの再生を完了した際に呼ばれるコールバックメソッド</summary>
     /// <summary>攻撃アニメーションイベントから呼ばれる</summary>
     public void OnCompleteAttack()
     {
         // 攻撃フラグをオフにする
         _isAttacking = false;
+    }
+
+    /// <summary>攻撃エフェクトを生成する</summary>
+    /// <param name="attackEffectIndex">攻撃エフェクトのインデックス</param>
+    public void CreateAttackEffect(int attackEffectIndex)
+    {
+        EffectManager.Instance.CreateEnemyAttackEffect(attackEffectIndex, GetAttackEffectPosition());
+    }
+
+    /// <summary>攻撃エフェクトの生成位置を求める</summary>
+    private Vector3 GetAttackEffectPosition()
+    {
+        Vector3 currentPos = transform.position;
+        Vector3 attackEffectPos = new Vector3(currentPos.x, _attackEffectPositionOffsetY, currentPos.z);
+        return attackEffectPos;
     }
 }
