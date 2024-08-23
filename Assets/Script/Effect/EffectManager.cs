@@ -11,8 +11,11 @@ public class EffectManager : Singleton<EffectManager>
     [SerializeField, Header("斬撃エフェクトデータのリスト")]
         private List<SlashEffectData> _slashEffectDataList = new List<SlashEffectData>();
 
+    [SerializeField, Header("敵の攻撃エフェクトのプレハブのリスト")]
+        private List<GameObject> _enemyAttackEffectList = new List<GameObject>();
+
     //-------------------------------------------------------------------------------
-    // 斬撃エフェクトを生成する処理
+    // 斬撃エフェクトの生成
     //-------------------------------------------------------------------------------
 
     /// <summary>水平の斬撃エフェクトを生成する共通メソッド</summary>
@@ -105,5 +108,27 @@ public class EffectManager : Singleton<EffectManager>
     {
         if (hand == AttackHand.Left || hand == AttackHand.Both) return true;
         else return false;
+    }
+
+    //-------------------------------------------------------------------------------
+    // 敵の攻撃エフェクトの生成
+    //-------------------------------------------------------------------------------
+
+    /// <summary>敵の攻撃エフェクトを生成する</summary>
+    /// <param name="effectIndex">攻撃エフェクトのインデックス</param>
+    /// <param name="position">攻撃エフェクトの生成位置</param>
+    public void CreateEnemyAttackEffect(int effectIndex, Vector3 position)
+    {
+        CreateEffect(GetEnemyAttackEffect(effectIndex), position);
+    }
+
+    //-------------------------------------------------------------------------------
+    // 敵の攻撃エフェクトの生成に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>引数で指定したインデックスに対応する敵の攻撃エフェクトを返す</summary>
+    private GameObject GetEnemyAttackEffect(int effectIndex)
+    {
+        return _enemyAttackEffectList[effectIndex];
     }
 }
