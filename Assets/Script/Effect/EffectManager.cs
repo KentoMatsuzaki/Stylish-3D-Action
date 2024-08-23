@@ -127,6 +127,7 @@ public class EffectManager : Singleton<EffectManager>
     //-------------------------------------------------------------------------------
 
     /// <summary>引数で指定したインデックスに対応する敵の攻撃エフェクトを返す</summary>
+    /// <param name="effectIndex">攻撃エフェクトのインデックス</param>
     private GameObject GetEnemyAttackEffect(int effectIndex)
     {
         return _enemyAttackEffectList[effectIndex];
