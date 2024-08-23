@@ -20,7 +20,7 @@ public class EnemyAttackEffect : MonoBehaviour
     [SerializeField, Header("UŒ‚ƒGƒtƒFƒNƒg‚ÌˆÚ“®‘¬“x")] private float _moveSpeed;
 
     /// <summary>’Ç”ö‚Ì‰ñ“]•âŠ®ŒW”</summary>
-    [SerializeField, Header("’Ç”ö‚Ì‰ñ“]•âŠ®ŒW”")] private float _rotationSLerpSpeed;
+    [SerializeField, Header("’Ç”ö‚Ì‰ñ“]•âŠ®ŒW”")] private float _rotationSlerpSpeed;
 
     private void Update()
     {
@@ -68,6 +68,6 @@ public class EnemyAttackEffect : MonoBehaviour
     private void RotateTowardsPlayer()
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, GetRotationToPlayer(),
-            _rotationSLerpSpeed * Time.deltaTime);
+            _rotationSlerpSpeed * Time.deltaTime);
     }
 }
