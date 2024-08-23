@@ -9,6 +9,8 @@ public class Robot : MonoBehaviour
 
     [SerializeField, Header("追跡アクションの設定項目")] private ChaseSettings _chaseSettings;
 
+    [SerializeField, Header("攻撃アクションの設定項目")] private AttackSettings _attackSettings;
+
     /// <summary>アニメーター</summary>
     Animator _animator;
 
@@ -29,14 +31,8 @@ public class Robot : MonoBehaviour
 
     public float PlayerDetectionRange => _chaseSettings._playerDetectionRange;
 
-    /// <summary>攻撃アニメーションのトリガー名</summary>
-    public const string ATTACK_TRIGGER = "Attack";
-
-    /// <summary>攻撃実行フラグ</summary>
-    public bool _isAttacking = false;
-
-    /// <summary>攻撃エフェクトの生成位置のY座標オフセット</summary>
-    public float _attackEffectPositionOffsetY;
+    /// <summary>攻撃フラグ</summary>
+    private bool _isAttacking = false;
 
     private void Start()
     {
@@ -350,7 +346,7 @@ public class Robot : MonoBehaviour
         _isAttacking = true;
 
         // 攻撃トリガーをオンにする
-        _animator.SetTrigger(ATTACK_TRIGGER);
+        _animator.SetTrigger(AttackSettings.ATTACK_TRIGGER);
 
         // 攻撃が一度だけ実行されることが保証されているため、成功の評価結果を返す
         return NodeStatus.Success;
@@ -372,14 +368,19 @@ public class Robot : MonoBehaviour
     /// <param name="attackEffectIndex">攻撃エフェクトのインデックス</param>
     public void CreateAttackEffect(int attackEffectIndex)
     {
-        EffectManager.Instance.CreateEnemyAttackEffect(attackEffectIndex, GetAttackEffectPosition());
+        // 攻撃エフェクトを生成する
+        GameObject attackEffect =  EffectManager.Instance.CreateEnemyAttackEffect(attackEffectIndex, 
+            GetAttackEffectPosition());
+
+        // 攻撃エフェクトの攻撃力を自身の攻撃力に設定する
+        attackEffect.GetComponent<EnemyAttacker>().Power = _attackSettings._power;
     }
 
     /// <summary>攻撃エフェクトの生成位置を求める</summary>
     private Vector3 GetAttackEffectPosition()
     {
         Vector3 currentPos = transform.position;
-        Vector3 attackEffectPos = new Vector3(currentPos.x, _attackEffectPositionOffsetY, currentPos.z);
+        Vector3 attackEffectPos = new Vector3(currentPos.x, _attackSettings._attackEffectPositionOffsetY, currentPos.z);
         return attackEffectPos;
     }
 }
