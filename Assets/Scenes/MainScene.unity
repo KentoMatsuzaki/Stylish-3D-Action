@@ -2019,7 +2019,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 09c4f973adaae8748a2c469c81368b26, type: 2}
   - {fileID: 11400000, guid: 0f2151e8f70fb754c8d4146d1fcb609e, type: 2}
   _enemyAttackEffectList:
-  - {fileID: 5436408572569499155, guid: be0151960bc995a4788e04ddd8044a91, type: 3}
+  - {fileID: 6670446932178780418, guid: 03d175f4503fd4142a5ade3992ea282b, type: 3}
+  - {fileID: 1449352840770188688, guid: 3532f6ad115446b44b950964eb5f678a, type: 3}
+  - {fileID: 1919455353640440865, guid: 20bf5451e34605142932ad40c6e8ec15, type: 3}
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0
