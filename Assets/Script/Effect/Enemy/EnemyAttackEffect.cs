@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 /// <summary>敵の攻撃エフェクトにアタッチするクラス</summary>
 public class EnemyAttackEffect : MonoBehaviour
