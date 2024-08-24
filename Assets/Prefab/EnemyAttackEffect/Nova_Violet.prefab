@@ -116,7 +116,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 100
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
@@ -4994,6 +4994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _effectType: 1
   _moveSpeed: 1
+  _destroyDelay: 0
   _rotationSlerpSpeed: 3
 --- !u!1 &3522334324346994686
 GameObject:
@@ -10248,7 +10249,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 100
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
@@ -24973,7 +24974,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 100
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
@@ -29887,7 +29888,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 100
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
@@ -34887,7 +34888,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 100
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
