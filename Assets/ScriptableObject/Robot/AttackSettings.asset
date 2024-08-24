@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: AttackSettings
   m_EditorClassIdentifier: 
   _power: 0
-  _isAttacking: 0
-  _attackEffectPositionOffsetY: 1
+  _attackEffectPositionOffsetY: 1.25
+  _attackEffectPositionOffsetZ: 0.85
