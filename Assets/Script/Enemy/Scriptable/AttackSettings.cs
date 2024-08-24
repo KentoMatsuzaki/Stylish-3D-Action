@@ -12,5 +12,8 @@ public class AttackSettings : ScriptableObject
     public const string ATTACK_TRIGGER = "Attack";
 
     /// <summary>攻撃エフェクトの生成位置のY座標オフセット</summary>
-    public float _attackEffectPositionOffsetY;   
+    public float _attackEffectPositionOffsetY;
+
+    /// <summary>攻撃エフェクトの生成位置のY座標オフセット</summary>
+    public float _attackEffectPositionOffsetZ;
 }
