@@ -4986,5 +4986,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _effectType: 0
   _moveSpeed: 3
-  _destroyDelay: 0
+  _destroyDelay: 10
   _rotationSlerpSpeed: 0

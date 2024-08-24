@@ -4994,7 +4994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _effectType: 1
   _moveSpeed: 1
-  _destroyDelay: 0
+  _destroyDelay: 10
   _rotationSlerpSpeed: 3
 --- !u!1 &3522334324346994686
 GameObject:

@@ -24583,7 +24583,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _effectType: 0
   _moveSpeed: 5
-  _destroyDelay: 0
+  _destroyDelay: 10
   _rotationSlerpSpeed: 0
 --- !u!135 &594661314082160904
 SphereCollider:

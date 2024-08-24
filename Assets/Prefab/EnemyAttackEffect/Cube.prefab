@@ -82,7 +82,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _effectType: 1
   _moveSpeed: 3
-  _destroyDelay: 0
+  _destroyDelay: 10
   _rotationSlerpSpeed: 5
 --- !u!1 &3247993286512521110
 GameObject:
