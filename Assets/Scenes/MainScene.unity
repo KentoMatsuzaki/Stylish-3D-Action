@@ -2022,6 +2022,8 @@ MonoBehaviour:
   - {fileID: 6670446932178780418, guid: 03d175f4503fd4142a5ade3992ea282b, type: 3}
   - {fileID: 1449352840770188688, guid: 3532f6ad115446b44b950964eb5f678a, type: 3}
   - {fileID: 1919455353640440865, guid: 20bf5451e34605142932ad40c6e8ec15, type: 3}
+  - {fileID: 4885933123468941944, guid: 1162ef1f9e2d6ab4d8d2d749611030f5, type: 3}
+  - {fileID: 2958798544307484671, guid: 9a87dd96c10bbfb4a9b52af7d23fd664, type: 3}
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0
