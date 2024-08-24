@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary>敵の攻撃エフェクトにアタッチするクラス</summary>
 public class EnemyAttackEffect : MonoBehaviour
@@ -52,22 +53,24 @@ public class EnemyAttackEffect : MonoBehaviour
         MoveForward();
     }
 
-    /// <summary>プレイヤーへの方向を求める</summary>
-    private Vector3 GetDirectionToPlayer()
+    /// <summary>プレイヤーへのY座標を無視した方向を求める</summary>
+    private Vector3 GetHorizontalDirectionToPlayer()
     {
-        return (Player.Instance.transform.position - transform.position).normalized;
+        Vector3 dir = (Player.Instance.transform.position - transform.position).normalized;
+        Vector3 fixedDir = new Vector3(dir.x, 0, dir.z);
+        return fixedDir;
     }
 
-    /// <summary>プレイヤーへの回転を求める</summary>
-    private Quaternion GetRotationToPlayer()
+    /// <summary>プレイヤーへのY座標を無視した回転を求める</summary>
+    private Quaternion GetHorizontalRotationToPlayer()
     {
-        return Quaternion.LookRotation(GetDirectionToPlayer());
+        return Quaternion.LookRotation(GetHorizontalDirectionToPlayer());
     }
 
     /// <summary>プレイヤーの方向へ回転する</summary>
     private void RotateTowardsPlayer()
     {
-        transform.rotation = Quaternion.Slerp(transform.rotation, GetRotationToPlayer(),
+        transform.rotation = Quaternion.Slerp(transform.rotation, GetHorizontalRotationToPlayer(),
             _rotationSlerpSpeed * Time.deltaTime);
     }
 }
