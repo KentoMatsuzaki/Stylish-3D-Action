@@ -380,7 +380,7 @@ public class Robot : MonoBehaviour
     private Vector3 GetAttackEffectPosition()
     {
         Vector3 currentPos = transform.position;
-        Vector3 attackEffectPos = new Vector3(currentPos.x, _attackSettings._attackEffectPositionOffsetY, currentPos.z);
+        Vector3 attackEffectPos = new Vector3(currentPos.x, _attackSettings._attackEffectPositionOffsetY, _attackSettings._attackEffectPositionOffsetZ);
         return attackEffectPos;
     }
 }
