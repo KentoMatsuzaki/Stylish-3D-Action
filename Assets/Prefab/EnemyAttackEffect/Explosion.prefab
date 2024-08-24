@@ -116,7 +116,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 100
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -4986,4 +4986,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _effectType: 0
   _moveSpeed: 3
+  _destroyDelay: 0
   _rotationSlerpSpeed: 0
