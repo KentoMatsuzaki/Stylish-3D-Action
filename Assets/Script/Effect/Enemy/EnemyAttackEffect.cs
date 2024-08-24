@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>敵の攻撃エフェクトにアタッチするクラス</summary>
@@ -19,8 +20,16 @@ public class EnemyAttackEffect : MonoBehaviour
     /// <summary>攻撃エフェクトの移動速度</summary>
     [SerializeField, Header("攻撃エフェクトの移動速度")] private float _moveSpeed;
 
+    /// <summary>攻撃エフェクトを破壊するまでの時間</summary>
+    [SerializeField, Header("攻撃エフェクトを破壊するまでの時間")] private float _destroyDelay;
+
     /// <summary>追尾時の回転補完係数</summary>
     [SerializeField, Header("追尾時の回転補完係数")] private float _rotationSlerpSpeed;
+
+    private void Start()
+    {
+        StartCoroutine(DestroySelfWithDelay());
+    }
 
     private void Update()
     {
@@ -71,5 +80,12 @@ public class EnemyAttackEffect : MonoBehaviour
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, GetHorizontalRotationToPlayer(),
             _rotationSlerpSpeed * Time.deltaTime);
+    }
+
+    /// <summary>遅延後に自壊するメソッド</summary>
+    private IEnumerator DestroySelfWithDelay()
+    {
+        yield return new WaitForSeconds(_destroyDelay);
+        Destroy(gameObject);
     }
 }
