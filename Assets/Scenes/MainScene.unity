@@ -1459,6 +1459,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1522206733}
     m_Modifications:
+    - target: {fileID: 2210851323035148710, guid: b7f96a62fc056b8499c8f517350dec38, type: 3}
+      propertyPath: m_TagString
+      value: PlayerAttack
+      objectReference: {fileID: 0}
+    - target: {fileID: 2210851323688179825, guid: b7f96a62fc056b8499c8f517350dec38, type: 3}
+      propertyPath: m_TagString
+      value: PlayerAttack
+      objectReference: {fileID: 0}
     - target: {fileID: 7143639680975514918, guid: b7f96a62fc056b8499c8f517350dec38, type: 3}
       propertyPath: m_Name
       value: Ciber_girl_White_skin
