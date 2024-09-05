@@ -11,6 +11,10 @@ public class Robot : MonoBehaviour
 
     [SerializeField, Header("攻撃アクションの設定項目")] private AttackSettings _attackSettings;
 
+    [SerializeField, Header("敵の体力")] private float _hp;
+
+    [SerializeField, Header("ノックバック強度")] private float _knockbackForce;
+
     /// <summary>アニメーター</summary>
     Animator _animator;
 
@@ -34,6 +38,12 @@ public class Robot : MonoBehaviour
     /// <summary>攻撃フラグ</summary>
     private bool _isAttacking = false;
 
+    /// <summary>被ダメージフラグ</summary>
+    private bool _isGettingHit = false;
+
+    /// <summary>死亡フラグ</summary>
+    private bool _isDead = false;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -45,6 +55,14 @@ public class Robot : MonoBehaviour
         // 初期化アニメーションの再生が終了していない場合は、処理を抜ける
         if (!_isInitialized) return;
 
+        if (_isDead) return;
+
+        if (_isGettingHit)
+        {
+            _isGettingHit = false;
+            GetHit();
+        }
+
         if (_isAttacking) return;
 
         //if (HasPlayerDetected())
@@ -55,7 +73,7 @@ public class Robot : MonoBehaviour
         //{
         //    Patrol();
         //}
-        Attack();
+        //Attack();
     }
 
     //-------------------------------------------------------------------------------
@@ -382,5 +400,66 @@ public class Robot : MonoBehaviour
         Vector3 currentPos = transform.position;
         Vector3 attackEffectPos = new Vector3(currentPos.x, _attackSettings._attackEffectPositionOffsetY, _attackSettings._attackEffectPositionOffsetZ);
         return attackEffectPos;
+    }
+
+    //-------------------------------------------------------------------------------
+    // 被ダメージ
+    //-------------------------------------------------------------------------------
+
+    /// <summary>被ダメージ処理</summary>
+    private void GetHit()
+    {
+        // 被ダメージアニメーションを再生
+        _animator.Play("Get Hit");
+
+        // ノックバック処理
+        ApplyKnockback();
+    }
+
+    //-------------------------------------------------------------------------------
+    // 被ダメージに関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>衝突判定</summary>
+    private void OnTriggerEnter(Collider collision)
+    {
+        // プレイヤーの攻撃判定との衝突ではない場合、処理を抜ける
+        if (!collision.gameObject.CompareTag("PlayerAttack")) return;
+
+        IAttacker attacker;
+
+        // ダメージ処理
+        if (collision.gameObject.TryGetComponent<IAttacker>(out attacker))
+        {
+            int damage = attacker.Power;
+            TakeDamage(damage);
+        }
+
+        _isGettingHit = true;
+    }
+
+    /// <summary>ダメージ適用処理</summary>
+    private void TakeDamage(int damage)
+    {
+        // ダメージを適用
+        _hp -= damage;
+
+        // 死亡している場合は、死亡フラグをオンにする
+        if (IsDead())
+        {
+            _isDead = true;
+        }
+    }
+
+    /// <summary>死亡判定</summary>
+    private bool IsDead()
+    {
+        return _hp <= 0 ? true : false;
+    }
+
+    /// <summary>ノックバック処理</summary>
+    private void ApplyKnockback()
+    {
+
     }
 }
