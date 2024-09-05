@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SlashEffectAttacker : MonoBehaviour
+public class SlashEffectAttacker : MonoBehaviour, IAttacker
 {
     /// <summary>ƒvƒŒƒCƒ„[‚ÌUŒ‚—Í</summary>
     [SerializeField, Header("UŒ‚—Í")] private int _power;

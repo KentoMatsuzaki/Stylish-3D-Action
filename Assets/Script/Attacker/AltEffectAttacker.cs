@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class AltEffectAttacker : MonoBehaviour
+public class AltEffectAttacker : MonoBehaviour, IAttacker
 {
     /// <summary>ƒvƒŒƒCƒ„[‚ÌUŒ‚—Í</summary>
     [SerializeField, Header("UŒ‚—Í")] private int _power;
