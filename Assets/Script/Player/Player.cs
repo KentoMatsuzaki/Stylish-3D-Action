@@ -372,8 +372,7 @@ public class Player : MonoBehaviour
 
             // 両手
             case 2:
-                TriggerRightSwordCollider();
-                TriggerLeftSwordCollider();
+                TriggerBothSwordCollider();
                 break;
 
             default:
@@ -385,6 +384,7 @@ public class Player : MonoBehaviour
     /// <summary>右手で持っている武器のコライダーを持続時間だけ有効化する</summary>
     private void TriggerRightSwordCollider()
     {
+        CancelInvoke(nameof(DisableRightSwordCollider));
         EnableRightSwordCollider();
         Invoke(nameof(DisableRightSwordCollider), _attackDuration);
     }
@@ -392,8 +392,23 @@ public class Player : MonoBehaviour
     /// <summary>左手で持っている武器のコライダーを持続時間だけ有効化する</summary>
     private void TriggerLeftSwordCollider()
     {
+        CancelInvoke(nameof(DisableLeftSwordCollider));
         EnableLeftSwordCollider();
         Invoke(nameof(DisableLeftSwordCollider), _attackDuration);
+    }
+
+    /// <summary>両手で持っている武器のコライダーを持続時間より少し長い間、有効化する</summary>
+    private void TriggerBothSwordCollider()
+    {
+        // 右手の処理
+        CancelInvoke(nameof(DisableRightSwordCollider));
+        EnableRightSwordCollider();
+        Invoke(nameof(DisableRightSwordCollider), _attackDuration * 3f);
+
+        // 左手の処理
+        CancelInvoke(nameof(DisableLeftSwordCollider));
+        EnableLeftSwordCollider();
+        Invoke(nameof(DisableLeftSwordCollider), _attackDuration * 3f);
     }
 
     public void EnableRightSwordCollider() => _rightSwordAttacker.EnableCollider();
