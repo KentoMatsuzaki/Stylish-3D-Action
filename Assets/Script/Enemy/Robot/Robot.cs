@@ -44,10 +44,14 @@ public class Robot : MonoBehaviour
     /// <summary>ノックバック処理のシーケンス</summary>
     private Sequence _knockbackSequence;
 
+    /// <summary>ルートノード</summary>
+    private BaseNode _rootNode;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
         _controller = GetComponent<CharacterController>();
+        _rootNode = ConstructBehaviorTree();
     }
 
     private void Update()
@@ -59,15 +63,7 @@ public class Robot : MonoBehaviour
 
         if (_isAttacking) return;
 
-        //if (HasPlayerDetected())
-        //{
-        //    Chase();
-        //}
-        //else
-        //{
-        //    Patrol();
-        //}
-        //Attack();
+        if (_rootNode != null) _rootNode.Execute();
     }
 
     //-------------------------------------------------------------------------------
@@ -85,10 +81,24 @@ public class Robot : MonoBehaviour
     // 条件ノード
     //-------------------------------------------------------------------------------
 
-    /// <summary>プレイヤーを感知しているかどうかを返す</summary>
-    private bool HasPlayerDetected()
+    /// <summary>プレイヤーを感知していない</summary>
+    private bool HasPlayerNotDetected()
     {
-        return GetHorizontalDistanceToPlayer() < _chaseSettings._playerDetectionRange;
+        return GetHorizontalDistanceToPlayer() > _chaseSettings._playerDetectionRange;
+    }
+
+    /// <summary>到達判定距離よりも遠くにプレイヤーを感知している</summary>
+    private bool HasPlayerDetectedWithDistance()
+    {
+        if ((GetHorizontalDistanceToPlayer() <= _chaseSettings._playerDetectionRange) &&
+            !HasReachedPlayer()) return true;
+        else return false;
+    }
+
+    /// <summary>到達判定距離よりも近くにプレイヤーを感知している</summary>
+    private bool HasPlayerDetectedWithoutDistance()
+    {
+        return HasReachedPlayer();
     }
 
     //-------------------------------------------------------------------------------
@@ -301,7 +311,7 @@ public class Robot : MonoBehaviour
         ClearPatrolDestination();
 
         // 追跡対象の元に到達した場合、成功の評価結果を返す
-        if (HasReachedChaseTarget()) return NodeStatus.Success;
+        if (HasReachedPlayer()) return NodeStatus.Success;
 
         // プレイヤーの方へ回転させる
         RotateTowardsPlayer();
@@ -324,9 +334,9 @@ public class Robot : MonoBehaviour
     }
 
     /// <summary>追跡対象の元へ到達したかどうかを返す</summary>
-    private bool HasReachedChaseTarget()
+    private bool HasReachedPlayer()
     {
-        return GetDistanceToPlayer() < _chaseSettings._chaseArrivalThreshold;
+        return GetDistanceToPlayer() <= _chaseSettings._chaseArrivalThreshold;
     }
 
     /// <summary>Y座標を無視したプレイヤーへの回転を求める</summary>
@@ -494,5 +504,46 @@ public class Robot : MonoBehaviour
         currentPos.y += 1f;
         EffectManager.Instance.CreateDeathEffect(0, currentPos);
         Invoke(nameof(DestroySelf), 0.1f);
+    }
+
+    //-------------------------------------------------------------------------------
+    // BehaviorTreeに関連しない処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>ビヘイビアツリーの構築</summary>
+    private BaseNode ConstructBehaviorTree()
+    {
+        // アクションノードの登録
+        var patrolAction = new ActionNode(() => Patrol()); // 巡回
+        var chaseAction = new ActionNode(() => Chase()); // 追跡
+        var attackAction = new ActionNode(() => Attack()); // 攻撃
+
+        // 条件ノードの登録
+        var hasPlayerNotDetected = new ConditionNode(() => HasPlayerNotDetected());
+        var hasPlayerDetectedWithDistance = new ConditionNode(() => HasPlayerDetectedWithDistance());
+        var hasPlayerDetectedWithoutDistance = new ConditionNode(() => HasPlayerDetectedWithoutDistance());
+
+        // 巡回シーケンスの登録
+        var patrolSequence = new SequenceNode();
+        patrolSequence.AddChild(hasPlayerNotDetected);
+        patrolSequence.AddChild(patrolAction);
+
+        // 追跡シーケンスの登録
+        var chaseSequence = new SequenceNode();
+        chaseSequence.AddChild(hasPlayerDetectedWithDistance);
+        chaseSequence.AddChild(chaseAction);
+
+        // 攻撃シーケンスの登録
+        var attackSequence = new SequenceNode();
+        attackSequence.AddChild(hasPlayerDetectedWithoutDistance);
+        attackSequence.AddChild(attackAction);
+
+        // セレクターノードの登録
+        var rootSelector = new SelectorNode();
+        rootSelector.AddChild(patrolSequence);
+        rootSelector.AddChild(chaseSequence);
+        rootSelector.AddChild(attackSequence);
+
+        return rootSelector;
     }
 }
