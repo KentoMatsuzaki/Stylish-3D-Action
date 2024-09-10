@@ -1,10 +1,10 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.InputSystem;
-using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Brain;
-using Unity.TinyCharacterController.Effect;
+using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Control;
+using Unity.TinyCharacterController.Effect;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>プレイヤーの状態管理</summary>
 public class Player : MonoBehaviour
@@ -36,11 +36,8 @@ public class Player : MonoBehaviour
     /// <summary>走行時の移動速度</summary>
     [SerializeField, Header("走行時の移動速度")] private float _sprintSpeed = 7.5f;
 
-    /// <summary>右手の攻撃クラス</summary>
-    [SerializeField, Header("右手の攻撃クラス")] private SlashEffectAttacker _rightSwordAttacker;
-
-    /// <summary>左手の攻撃クラス</summary>
-    [SerializeField, Header("左手の攻撃クラス")] private SlashEffectAttacker _leftSwordAttacker;
+    /// <summary>攻撃クラス</summary>
+    [SerializeField, Header("攻撃クラス")] private SlashAttacker _attacker;
 
     /// <summary>攻撃判定の持続時間</summary>
     [SerializeField, Header("攻撃判定の持続時間")] private float _attackDuration;
@@ -355,69 +352,25 @@ public class Player : MonoBehaviour
 
     /// <summary>攻撃がヒットする瞬間の処理をするコールバックイベント</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
-    /// <param name="handIndex">攻撃に用いる手を示すインデックス（0が右手、1が左手、2が両手）</param>
-    public void AttackImpactEvent(int handIndex)
+    public void AttackImpactEvent()
     {
-        switch(handIndex)
-        {
-            // 右手
-            case 0:
-                TriggerRightSwordCollider();
-                break;
-
-            // 左手
-            case 1:
-                TriggerLeftSwordCollider();
-                break;
-
-            // 両手
-            case 2:
-                TriggerBothSwordCollider();
-                break;
-
-            default:
-                Debug.LogError($"Unexpected handIndex value : {handIndex}");
-                break;
-        }
+        CancelInvoke(nameof(DisableAttackCollider));
+        EnableAttackCollider();
+        Invoke(nameof(DisableAttackCollider), _attackDuration);
     }
 
-    /// <summary>右手で持っている武器のコライダーを持続時間だけ有効化する</summary>
-    private void TriggerRightSwordCollider()
+    /// <summary>攻撃用のコライダーを攻撃の持続時間だけ有効化する</summary>
+    private void EnableAttackCollider()
     {
-        CancelInvoke(nameof(DisableRightSwordCollider));
-        EnableRightSwordCollider();
-        Invoke(nameof(DisableRightSwordCollider), _attackDuration);
+        _attacker.EnableCollider();
     }
 
-    /// <summary>左手で持っている武器のコライダーを持続時間だけ有効化する</summary>
-    private void TriggerLeftSwordCollider()
+    /// <summary>攻撃用のコライダーを無効化する</summary>
+    private void DisableAttackCollider()
     {
-        CancelInvoke(nameof(DisableLeftSwordCollider));
-        EnableLeftSwordCollider();
-        Invoke(nameof(DisableLeftSwordCollider), _attackDuration);
+        _attacker.DisableCollider();
     }
 
-    /// <summary>両手で持っている武器のコライダーを持続時間より少し長い間、有効化する</summary>
-    private void TriggerBothSwordCollider()
-    {
-        // 右手の処理
-        CancelInvoke(nameof(DisableRightSwordCollider));
-        EnableRightSwordCollider();
-        Invoke(nameof(DisableRightSwordCollider), _attackDuration * 3f);
-
-        // 左手の処理
-        CancelInvoke(nameof(DisableLeftSwordCollider));
-        EnableLeftSwordCollider();
-        Invoke(nameof(DisableLeftSwordCollider), _attackDuration * 3f);
-    }
-
-    public void EnableRightSwordCollider() => _rightSwordAttacker.EnableCollider();
-
-    public void DisableRightSwordCollider() => _rightSwordAttacker.DisableCollider();
-
-    public void EnableLeftSwordCollider() => _leftSwordAttacker.EnableCollider();
-
-    public void DisableLeftSwordCollider() => _leftSwordAttacker.DisableCollider();
 
     /// <summary>攻撃エフェクト(斬り上げ)を生成・表示する</summary>
     /// <param name="attackHandIndex">攻撃に使用する手を示すインデックス</param>

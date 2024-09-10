@@ -1,6 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
+/// <summary>特殊攻撃クラス</summary>
 public class AltEffectAttacker : MonoBehaviour, IAttacker
 {
     /// <summary>プレイヤーの攻撃力</summary>
