@@ -2024,6 +2024,10 @@ MonoBehaviour:
   - {fileID: 1449352840770188688, guid: 3532f6ad115446b44b950964eb5f678a, type: 3}
   - {fileID: 1919455353640440865, guid: 20bf5451e34605142932ad40c6e8ec15, type: 3}
   - {fileID: 4885933123468941944, guid: 1162ef1f9e2d6ab4d8d2d749611030f5, type: 3}
+  _attackHitEffectList:
+  - {fileID: 1509486939602526, guid: 2bdfafb54af034a46815013e96d908d0, type: 3}
+  _deathEffectList:
+  - {fileID: 1315764361558410, guid: c0adf18fe4c455340b1695a4656eaa01, type: 3}
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0
@@ -3081,7 +3085,6 @@ GameObject:
   - component: {fileID: 8296172668456580685}
   - component: {fileID: 8296172668456580687}
   - component: {fileID: 8296172668456580686}
-  - component: {fileID: 8296172668456580688}
   m_Layer: 3
   m_Name: Robot
   m_TagString: Enemy
@@ -3151,29 +3154,8 @@ MonoBehaviour:
   _patrolSettings: {fileID: 11400000, guid: 79bdc6b9d7474374c8bab8b5490a37fe, type: 2}
   _chaseSettings: {fileID: 11400000, guid: 45b9b6fce5d1fd94a93dc57f02feea2d, type: 2}
   _attackSettings: {fileID: 11400000, guid: e171e929d6640ae4ab4b15e70043b06a, type: 2}
-  _hp: 1000
+  _hp: 200
   _knockbackForce: 1
---- !u!135 &8296172668456580688
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8296172668456580684}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 7.5
-  m_Center: {x: 0, y: 5, z: 0}
 --- !u!4 &8388172545169041247
 Transform:
   m_ObjectHideFlags: 0

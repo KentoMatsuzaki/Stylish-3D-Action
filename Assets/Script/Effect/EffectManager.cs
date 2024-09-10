@@ -11,8 +11,17 @@ public class EffectManager : Singleton<EffectManager>
     [SerializeField, Header("斬撃エフェクトデータのリスト")]
         private List<SlashEffectData> _slashEffectDataList = new List<SlashEffectData>();
 
+    /// <summary>敵の攻撃プレハブのリスト</summary>
     [SerializeField, Header("敵の攻撃エフェクトのプレハブのリスト")]
         private List<GameObject> _enemyAttackEffectList = new List<GameObject>();
+
+    /// <summary>攻撃ヒットエフェクトのプレハブのリスト</summary>
+    [SerializeField, Header("攻撃のヒットエフェクト")] 
+        private List<GameObject> _attackHitEffectList = new List<GameObject>();
+
+    /// <summary>死亡時エフェクトのプレハブのリスト</summary>
+    [SerializeField, Header("死亡時のエフェクト")]
+    private List<GameObject> _deathEffectList = new List<GameObject>();
 
     //-------------------------------------------------------------------------------
     // 斬撃エフェクトの生成
@@ -131,5 +140,21 @@ public class EffectManager : Singleton<EffectManager>
     private GameObject GetEnemyAttackEffect(int effectIndex)
     {
         return _enemyAttackEffectList[effectIndex];
+    }
+
+    //-------------------------------------------------------------------------------
+    // ダメージエフェクトの生成
+    //-------------------------------------------------------------------------------
+
+    /// <summary>攻撃のヒットエフェクトを生成する</summary>
+    public void CreateAttackHitEffect(int effectIndex, Vector3 position)
+    {
+        CreateEffect(_attackHitEffectList[effectIndex], position);
+    }
+
+    /// <summary>死亡時のエフェクトを生成する</summary>
+    public void CreateDeathEffect(int effectIndex, Vector3 position)
+    {
+        CreateEffect(_deathEffectList[effectIndex], position);
     }
 }
