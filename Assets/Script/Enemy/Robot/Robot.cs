@@ -38,11 +38,11 @@ public class Robot : MonoBehaviour
     /// <summary>攻撃フラグ</summary>
     private bool _isAttacking = false;
 
-    /// <summary>被ダメージフラグ</summary>
-    private bool _isGettingHit = false;
-
     /// <summary>死亡フラグ</summary>
     private bool _isDead = false;
+
+    /// <summary>ノックバック処理のシーケンス</summary>
+    private Sequence _knockbackSequence;
 
     private void Start()
     {
@@ -56,12 +56,6 @@ public class Robot : MonoBehaviour
         if (!_isInitialized) return;
 
         if (_isDead) return;
-
-        if (_isGettingHit)
-        {
-            _isGettingHit = false;
-            GetHit();
-        }
 
         if (_isAttacking) return;
 
@@ -426,6 +420,8 @@ public class Robot : MonoBehaviour
         // プレイヤーの攻撃判定との衝突ではない場合、処理を抜ける
         if (!collision.gameObject.CompareTag("PlayerAttack")) return;
 
+        if (_isDead) return;
+
         IAttacker attacker;
 
         // ダメージ処理
@@ -435,7 +431,10 @@ public class Robot : MonoBehaviour
             TakeDamage(damage);
         }
 
-        _isGettingHit = true;
+        if (_isDead) return;
+
+        EffectManager.Instance.CreateAttackHitEffect(0, collision.ClosestPointOnBounds(transform.position));
+        GetHit();
     }
 
     /// <summary>ダメージ適用処理</summary>
@@ -444,9 +443,11 @@ public class Robot : MonoBehaviour
         // ダメージを適用
         _hp -= damage;
 
-        // 死亡している場合は、死亡フラグをオンにする
+        // 死亡している場合は、死亡処理を実行する
         if (IsDead())
         {
+            Debug.Log("Dead");
+            _animator.Play("Die");
             _isDead = true;
         }
     }
@@ -460,6 +461,38 @@ public class Robot : MonoBehaviour
     /// <summary>ノックバック処理</summary>
     private void ApplyKnockback()
     {
+        // 前回のノックバックシーケンスを終了させる
+        _knockbackSequence?.Kill();
 
+        // ノックバックさせる方向を取得する
+        var current = transform.position;
+        var playerPos = Player.Instance.transform.position;
+
+        current.y = 0;
+        playerPos.y = 0;
+
+        var knockbackDir = (current - playerPos).normalized;
+
+        // ノックバックの移動目標座標
+        var endPos = transform.position + knockbackDir * _knockbackForce;
+
+        _knockbackSequence = DOTween.Sequence().SetLink(gameObject).
+            Append(transform.DOMove(endPos, 0.5f).SetEase(Ease.OutCubic));
+    }
+
+    /// <summary>自身のゲームオブジェクトを破棄する</summary>
+    public void DestroySelf()
+    {
+        Destroy(gameObject);
+    }
+
+    /// <summary>死亡時の処理を完了した際に呼ばれるメソッド</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void OnCompletedDeath()
+    {
+        var currentPos = transform.position;
+        currentPos.y += 1f;
+        EffectManager.Instance.CreateDeathEffect(0, currentPos);
+        Invoke(nameof(DestroySelf), 0.1f);
     }
 }
