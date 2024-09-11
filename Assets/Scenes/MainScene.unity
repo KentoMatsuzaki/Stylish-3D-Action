@@ -2023,11 +2023,42 @@ MonoBehaviour:
   - {fileID: 6670446932178780418, guid: 03d175f4503fd4142a5ade3992ea282b, type: 3}
   - {fileID: 1449352840770188688, guid: 3532f6ad115446b44b950964eb5f678a, type: 3}
   - {fileID: 1919455353640440865, guid: 20bf5451e34605142932ad40c6e8ec15, type: 3}
-  - {fileID: 4885933123468941944, guid: 1162ef1f9e2d6ab4d8d2d749611030f5, type: 3}
+  - {fileID: 9078023857244347558, guid: 7b47227bcb2b415479dbaf5932f8be33, type: 3}
   _attackHitEffectList:
   - {fileID: 1509486939602526, guid: 2bdfafb54af034a46815013e96d908d0, type: 3}
   _deathEffectList:
   - {fileID: 1315764361558410, guid: c0adf18fe4c455340b1695a4656eaa01, type: 3}
+--- !u!1 &1733208573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1733208574}
+  m_Layer: 0
+  m_Name: Muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1733208574
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733208573}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 6, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5006512735538529375}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1856680556
 GameObject:
   m_ObjectHideFlags: 0
@@ -2850,6 +2881,7 @@ Transform:
   m_Children:
   - {fileID: 2793800854330214860}
   - {fileID: 1728169425472001581}
+  - {fileID: 1733208574}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5185527299074536585
@@ -3156,6 +3188,7 @@ MonoBehaviour:
   _attackSettings: {fileID: 11400000, guid: e171e929d6640ae4ab4b15e70043b06a, type: 2}
   _hp: 200
   _knockbackForce: 1
+  _muzzle: {fileID: 1733208574}
 --- !u!4 &8388172545169041247
 Transform:
   m_ObjectHideFlags: 0
