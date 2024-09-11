@@ -33,7 +33,7 @@ public class EnemyAttackEffect : MonoBehaviour
 
     private void Update()
     {
-        switch(_effectType)
+        switch (_effectType)
         {
             // 直進するエフェクト
             case EnemyAttackEffectType.Straight:
@@ -48,7 +48,7 @@ public class EnemyAttackEffect : MonoBehaviour
     /// <summary>前方に移動する</summary>
     private void MoveForward()
     {
-        transform.Translate(transform.forward * _moveSpeed * Time.deltaTime);
+        transform.Translate(transform.forward * _moveSpeed * Time.deltaTime, Space.World);
     }
 
     /// <summary>プレイヤーを追尾する</summary>

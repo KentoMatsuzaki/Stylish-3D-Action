@@ -15,6 +15,8 @@ public class Robot : MonoBehaviour
 
     [SerializeField, Header("ノックバック強度")] private float _knockbackForce;
 
+    [SerializeField, Header("攻撃エフェクトを生成する位置")] private Transform _muzzle;
+
     /// <summary>アニメーター</summary>
     Animator _animator;
 
@@ -392,18 +394,13 @@ public class Robot : MonoBehaviour
     {
         // 攻撃エフェクトを生成する
         GameObject attackEffect =  EffectManager.Instance.CreateEnemyAttackEffect(attackEffectIndex, 
-            GetAttackEffectPosition());
+            _muzzle.position);
 
         // 攻撃エフェクトの攻撃力を自身の攻撃力に設定する
         attackEffect.GetComponent<EnemyAttacker>().Power = _attackSettings._power;
-    }
 
-    /// <summary>攻撃エフェクトの生成位置を求める</summary>
-    private Vector3 GetAttackEffectPosition()
-    {
-        Vector3 currentPos = transform.position;
-        Vector3 attackEffectPos = new Vector3(currentPos.x, _attackSettings._attackEffectPositionOffsetY, _attackSettings._attackEffectPositionOffsetZ);
-        return attackEffectPos;
+        // 攻撃エフェクトの回転を自身の回転と同期させる
+        attackEffect.transform.rotation = transform.rotation;
     }
 
     //-------------------------------------------------------------------------------
@@ -418,6 +415,9 @@ public class Robot : MonoBehaviour
 
         // ノックバック処理
         ApplyKnockback();
+
+        // 敵の攻撃が中断された場合に攻撃のキャンセル処理を行う
+        OnCompleteAttack();
     }
 
     //-------------------------------------------------------------------------------
