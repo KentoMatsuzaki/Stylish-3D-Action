@@ -459,6 +459,7 @@ public class Robot : MonoBehaviour
             Debug.Log("Dead");
             _animator.Play("Die");
             _isDead = true;
+            Spawner.Instance.DecreaseEnemyCount();
         }
     }
 
