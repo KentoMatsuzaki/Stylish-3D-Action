@@ -552,8 +552,14 @@ public class Player : MonoBehaviour
         // 敵の攻撃コライダーと接触した場合
         if (other.gameObject.CompareTag("EnemyAttack") && CanTransitionToDamageState())
         {
+            // 無敵時間中は処理を抜ける
+            if (_invincibleFlag) return;
+
             // ダメージ適用
             TakeDamage(other.gameObject.GetComponent<EnemyAttacker>().Power);
+
+            // ヒットエフェクト
+            EffectManager.Instance.CreateAttackHitEffect(1, other.ClosestPointOnBounds(transform.position));
         }
     }
 
@@ -568,8 +574,6 @@ public class Player : MonoBehaviour
     /// <summary>ダメージ適用処理</summary>
     private void TakeDamage(int damage)
     {
-        if (_invincibleFlag) return;
-
         _hp -= damage;
 
         // 体力が0以下なら死亡処理を呼ぶ
