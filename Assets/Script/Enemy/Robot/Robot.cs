@@ -17,6 +17,9 @@ public class Robot : MonoBehaviour
 
     [SerializeField, Header("攻撃エフェクトを生成する位置")] private Transform _muzzle;
 
+    /// <summary>初期化アニメーションの完了を示すフラグ</summary>
+    [SerializeField, Header("初期化フラグ")] private bool _isInitialized = false;
+
     /// <summary>アニメーター</summary>
     Animator _animator;
 
@@ -31,9 +34,6 @@ public class Robot : MonoBehaviour
 
     /// <summary>巡回する目的地へ回転中であるかを示すフラグ</summary>
     private bool _isRotatingTowardsPatrolDestination = false;
-
-    /// <summary>初期化アニメーションの完了を示すフラグ</summary>
-    private bool _isInitialized = false;
 
     public float PlayerDetectionRange => _chaseSettings._playerDetectionRange;
 
