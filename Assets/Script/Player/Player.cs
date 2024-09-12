@@ -56,6 +56,15 @@ public class Player : MonoBehaviour
     /// <summary>敵のレイヤーマスク</summary>
     [SerializeField, Header("敵のレイヤーマスク")] private LayerMask _enemyLayer;
 
+    /// <summary>プレイヤーのHP</summary>
+    [SerializeField, Header("プレイヤーの体力")] private float _hp = 1000;
+
+    /// <summary>被ダメージ時の無敵フラグ</summary>
+    private bool _invincibleFlag = false;
+
+    /// <summary>無敵状態を表すエフェクト</summary>
+    [SerializeField, Header("無敵エフェクト")] private GameObject _invincibleEffect;
+
     /// <summary>プレイヤーのインスタンス</summary>
     public static Player Instance {  get; private set; }
 
@@ -90,6 +99,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+
+
         // 移動フラグを設定
         _animator.SetBool("IsMove", _moveControl.IsMove);
 
@@ -113,11 +124,11 @@ public class Player : MonoBehaviour
         Attack, // 攻撃
         Float, // 浮遊
         Damage, // ダメージ
-        Die 　　// 死亡
+        Dead 　　// 死亡
     }
 
     //-------------------------------------------------------------------------------
-    // プレイヤーの状態に関する処理
+    // 無操作状態に関する処理
     //-------------------------------------------------------------------------------
 
     /// <summary>プレイヤーの状態を無操作状態に設定する</summary>
@@ -125,14 +136,7 @@ public class Player : MonoBehaviour
     public void SetPlayerStateIdle ()
     {
         _currentState = PlayerState.Idle;
-    }
-
-    /// <summary>プレイヤーの状態を移動状態に設定する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void SetPlayerStateMove()
-    {
-        _currentState = PlayerState.Move;
-    }
+    } 
 
     //-------------------------------------------------------------------------------
     // 移動のコールバックイベント
@@ -188,6 +192,13 @@ public class Player : MonoBehaviour
     // 移動に関する処理
     //-------------------------------------------------------------------------------
 
+    /// <summary>プレイヤーの状態を移動状態に設定する</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
+    public void SetPlayerStateMove()
+    {
+        _currentState = PlayerState.Move;
+    }
+
     /// <summary>移動状態に遷移できるかどうか</summary>
     private bool CanTransitionToMoveState()
     {
@@ -199,7 +210,7 @@ public class Player : MonoBehaviour
     private bool CanMove()
     {
         if (_currentState == PlayerState.Attack || _currentState == PlayerState.Float || 
-            _currentState == PlayerState.Damage || _currentState == PlayerState.Die) return false;
+            _currentState == PlayerState.Damage || _currentState == PlayerState.Dead) return false;
         else return true;
     }
 
@@ -531,4 +542,76 @@ public class Player : MonoBehaviour
 
     /// <summary>重力を無効化する</summary>
     private void DisableGravity() => _gravity.enabled = false;
+
+    //-------------------------------------------------------------------------------
+    // ダメージ処理
+    //-------------------------------------------------------------------------------
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // 敵の攻撃コライダーと接触した場合
+        if (other.gameObject.CompareTag("EnemyAttack") && CanTransitionToDamageState())
+        {
+            // ダメージ適用
+            TakeDamage(other.gameObject.GetComponent<EnemyAttacker>().Power);
+        }
+    }
+
+    /// <summary>ダメージ状態に遷移できるかどうか</summary>
+    private bool CanTransitionToDamageState()
+    {
+        if (_currentState == PlayerState.Float || _currentState == PlayerState.Damage ||
+            _currentState == PlayerState.Dead) return false;
+        return true;
+    }
+
+    /// <summary>ダメージ適用処理</summary>
+    private void TakeDamage(int damage)
+    {
+        if (_invincibleFlag) return;
+
+        _hp -= damage;
+
+        // 体力が0以下なら死亡処理を呼ぶ
+        if (_hp < 0)
+        {
+            OnDead();
+        }
+
+        // 体力が0以上ならダメージ処理を呼ぶ
+        else
+        {
+            OnDamage();
+        }
+    }
+
+    /// <summary>被ダメージ時の処理</summary>
+    private void OnDamage()
+    {
+        _currentState = PlayerState.Damage;
+        _animator.SetTrigger("Damage");
+        EnableInvincibility();
+        Invoke(nameof(DisableInvincibility), 2.0f);
+    }
+
+    /// <summary>無敵状態の有効化</summary>
+    private void EnableInvincibility()
+    {
+        _invincibleFlag = true;
+        _invincibleEffect.SetActive(true);
+    }
+
+    /// <summary>無敵状態の無効化</summary>
+    private void DisableInvincibility()
+    {
+        _invincibleFlag = false;
+        _invincibleEffect.SetActive(false);
+    }
+
+    /// <summary>死亡時の処理</summary>
+    private void OnDead()
+    {
+        _currentState = PlayerState.Dead;
+        _animator.Play("Die");
+    }
 }
