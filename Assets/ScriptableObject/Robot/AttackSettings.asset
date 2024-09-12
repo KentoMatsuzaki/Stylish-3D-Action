@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31dfd0fce12ba0c41aa4e1eae6a465bd, type: 3}
   m_Name: AttackSettings
   m_EditorClassIdentifier: 
-  _power: 0
-  _attackEffectPositionOffsetY: 1.25
-  _attackEffectPositionOffsetZ: 0.85
+  _power: 100
