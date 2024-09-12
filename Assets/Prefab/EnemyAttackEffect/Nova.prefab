@@ -39524,7 +39524,7 @@ GameObject:
   - component: {fileID: 6035918087275363291}
   m_Layer: 0
   m_Name: Nova
-  m_TagString: Untagged
+  m_TagString: EnemyAttack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
