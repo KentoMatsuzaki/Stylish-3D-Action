@@ -366,6 +366,8 @@ public class Robot : MonoBehaviour
     /// <returns>攻撃アクションノードの評価結果</returns>
     private NodeStatus Attack()
     {
+        transform.rotation = Quaternion.Slerp(transform.rotation, GetHorizontalRotationToPlayer(), 1.0f);
+
         // 攻撃フラグをオンにする
         _isAttacking = true;
 
@@ -460,6 +462,7 @@ public class Robot : MonoBehaviour
             _animator.Play("Die");
             _isDead = true;
             Spawner.Instance.DecreaseEnemyCount();
+            GameManager.Instance.AddComboCount();
         }
     }
 
