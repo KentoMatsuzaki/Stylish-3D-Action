@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: ChaseSettings
   m_EditorClassIdentifier: 
   _chaseSpeed: 1
-  _chaseRotationSLerpSpeed: 3
-  _playerDetectionRange: 7.5
-  _chaseArrivalThreshold: 3
+  _chaseRotationSlerpSpeed: 3
+  _playerDetectionRange: 10
+  _chaseArrivalThreshold: 5
