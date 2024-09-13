@@ -137,7 +137,7 @@ MonoBehaviour:
   _patrolSettings: {fileID: 11400000, guid: 79bdc6b9d7474374c8bab8b5490a37fe, type: 2}
   _chaseSettings: {fileID: 11400000, guid: 45b9b6fce5d1fd94a93dc57f02feea2d, type: 2}
   _attackSettings: {fileID: 11400000, guid: e171e929d6640ae4ab4b15e70043b06a, type: 2}
-  _hp: 200
+  _hp: 500
   _knockbackForce: 1
   _muzzle: {fileID: 6942629736207885438}
   _isInitialized: 1
